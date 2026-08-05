@@ -44,15 +44,15 @@ if command -v pacman &>/dev/null; then
     fi
 
     AUR_PKGS=(
-        aylurs-gtk-shell libastal-gtk3
-        libastal-io libastal-hyprland libastal-battery
-        libastal-network libastal-bluetooth libastal-wireplumber
-        libastal-tray libastal-notifd libastal-mpris libastal-apps
+        aylurs-gtk-shell-git
+        libastal-3.0-git libastal-hyprland-git libastal-battery-git
+        libastal-network-git libastal-bluetooth-git libastal-wireplumber-git
+        libastal-tray-git libastal-notifd-git libastal-mpris-git libastal-apps-git
         walker-bin cliphist ttf-jetbrains-mono-nerd adw-gtk-theme
     )
 
     echo "==> Installing AUR desktop shell & utility packages via $AUR_HELPER..."
-    "$AUR_HELPER" -S --needed --noconfirm "${AUR_PKGS[@]}"
+    "$AUR_HELPER" -S --needed --noconfirm "${AUR_PKGS[@]}" || "$AUR_HELPER" -S --needed --noconfirm aylurs-gtk-shell walker-bin cliphist ttf-jetbrains-mono-nerd adw-gtk-theme || true
 else
     echo "==> Note: pacman not found (running non-Arch OS). Skipping automatic package manager installation."
 fi
