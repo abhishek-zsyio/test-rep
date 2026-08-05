@@ -1,4 +1,4 @@
-import { execAsync } from "astal";
+import { execAsync } from "astal/gtk3";
 
 export async function sh(cmd: string): Promise<string> {
     try {

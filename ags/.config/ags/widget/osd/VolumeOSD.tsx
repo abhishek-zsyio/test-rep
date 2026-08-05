@@ -1,5 +1,5 @@
 import { Widget, Astal } from "astal/gtk3";
-import { bind, Variable } from "astal";
+import { bind, Variable } from "astal/gtk3";
 import audio from "../../services/audio";
 
 export const volumeVisible = Variable(false);

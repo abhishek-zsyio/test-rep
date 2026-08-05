@@ -2,7 +2,7 @@ import { Widget, Astal, App } from "astal/gtk3";
 import { WifiToggle } from "./toggles/WifiToggle";
 import { BluetoothToggle } from "./toggles/BluetoothToggle";
 import { VolumeSlider } from "./toggles/VolumeSlider";
-import { bind } from "astal";
+import { bind } from "astal/gtk3";
 import mpris from "../../services/mpris";
 import notifd from "../../services/notifications";
 import { sh } from "../../utils/exec";

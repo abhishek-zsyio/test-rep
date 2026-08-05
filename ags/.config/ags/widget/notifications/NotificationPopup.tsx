@@ -1,5 +1,5 @@
 import { Widget, Astal } from "astal/gtk3";
-import { bind } from "astal";
+import { bind } from "astal/gtk3";
 import notifd from "../../services/notifications";
 
 export function NotificationPopup() {

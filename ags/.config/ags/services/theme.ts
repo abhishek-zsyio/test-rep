@@ -1,4 +1,4 @@
-import { Variable } from "astal";
+import { Variable } from "astal/gtk3";
 import { sh } from "../utils/exec";
 
 export const activeTheme = Variable("rose-pine");

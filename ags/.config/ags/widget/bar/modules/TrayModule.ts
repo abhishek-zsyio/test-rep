@@ -1,5 +1,5 @@
 import { Widget } from "astal/gtk3";
-import { bind } from "astal";
+import { bind } from "astal/gtk3";
 import tray from "../../../services/tray";
 
 export function TrayModule() {

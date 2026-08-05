@@ -1,5 +1,5 @@
 import { Widget } from "astal/gtk3";
-import { Binding } from "astal";
+import { Binding } from "astal/gtk3";
 
 export function Slider({
     value,

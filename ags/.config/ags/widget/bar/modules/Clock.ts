@@ -1,5 +1,5 @@
 import { Widget } from "astal/gtk3";
-import { Variable, GLib } from "astal";
+import { Variable, GLib } from "astal/gtk3";
 
 export function Clock() {
     const time = Variable("").poll(1000, () =>

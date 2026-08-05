@@ -1,5 +1,5 @@
 import { Widget, Astal } from "astal/gtk3";
-import { Variable } from "astal";
+import { Variable } from "astal/gtk3";
 import { sh } from "../../utils/exec";
 
 export const brightnessVisible = Variable(false);
