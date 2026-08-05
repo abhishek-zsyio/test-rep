@@ -17,7 +17,7 @@ if command -v pacman &>/dev/null; then
         brightnessctl acpi upower playerctl polkit-gnome
         network-manager-applet pipewire pipewire-pulse wireplumber
         ttf-font-awesome nautilus qt5ct qt6ct kvantum nwg-look firefox
-        papirus-icon-theme breeze-icons adw-gtk3 swww
+        papirus-icon-theme breeze-icons swww
     )
 
     sudo pacman -S --needed --noconfirm "${PACMAN_PKGS[@]}"
@@ -41,7 +41,7 @@ if command -v pacman &>/dev/null; then
         libastal-io libastal-hyprland libastal-battery
         libastal-network libastal-bluetooth libastal-wireplumber
         libastal-tray libastal-notifd libastal-mpris libastal-apps
-        walker-bin cliphist ttf-jetbrains-mono-nerd
+        walker-bin cliphist ttf-jetbrains-mono-nerd adw-gtk-theme
         catppuccin-gtk-theme-mocha rose-pine-gtk-theme-full nordic-theme
     )
 
