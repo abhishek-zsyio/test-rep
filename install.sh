@@ -86,6 +86,15 @@ for pkg in "${PACKAGES[@]}"; do
     fi
 done
 
+# 7. Absolute target symlink resolution for active theme configuration files
+mkdir -p "$HOME/.config/hypr/conf" "$HOME/.config/ags/style" "$HOME/.config/kitty" "$HOME/.config/walker" "$HOME/.config/gtk-3.0" "$HOME/.config/gtk-4.0"
+ln -sfn "$HOME/.config/themes/active/hypr.conf" "$HOME/.config/hypr/conf/colors.conf"
+ln -sfn "$HOME/.config/themes/active/ags.scss" "$HOME/.config/ags/style/colors.scss"
+ln -sfn "$HOME/.config/themes/active/kitty.conf" "$HOME/.config/kitty/colors.conf"
+ln -sfn "$HOME/.config/themes/active/walker.css" "$HOME/.config/walker/colors.css"
+ln -sfn "$HOME/.config/themes/active/gtk3-settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
+ln -sfn "$HOME/.config/themes/active/gtk4-settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
+
 echo "=========================================="
 echo "==> System Packages & Dotfiles Installation Complete!"
 echo "==> Launch Hyprland to enjoy your rice!"
