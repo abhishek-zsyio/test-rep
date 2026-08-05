@@ -96,6 +96,13 @@ ln -sfn "$HOME/.config/themes/active/walker.css" "$HOME/.config/walker/colors.cs
 ln -sfn "$HOME/.config/themes/active/gtk3-settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
 ln -sfn "$HOME/.config/themes/active/gtk4-settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
 
+# 8. Ensure ~/.local/bin is in PATH
+if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc" 2>/dev/null || true
+    echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.zshrc" 2>/dev/null || true
+    export PATH="$HOME/.local/bin:$PATH"
+fi
+
 echo "=========================================="
 echo "==> System Packages & Dotfiles Installation Complete!"
 echo "==> Launch Hyprland to enjoy your rice!"
