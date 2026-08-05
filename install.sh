@@ -42,7 +42,6 @@ if command -v pacman &>/dev/null; then
         libastal-network libastal-bluetooth libastal-wireplumber
         libastal-tray libastal-notifd libastal-mpris libastal-apps
         walker-bin cliphist ttf-jetbrains-mono-nerd adw-gtk-theme
-        catppuccin-gtk-theme-mocha rose-pine-gtk-theme-full nordic-theme
     )
 
     echo "==> Installing AUR desktop shell & utility packages via $AUR_HELPER..."
