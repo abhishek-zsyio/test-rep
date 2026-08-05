@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$DOTFILES_DIR"
+
+echo "=========================================="
+echo "==> Setting up Hyprland + AGS Dotfiles Rice..."
+echo "=========================================="
+
+# 1. Package Installation (Arch Linux detection)
+if command -v pacman &>/dev/null; then
+    echo "==> Arch Linux detected. Installing official system packages..."
+    
+    PACMAN_PKGS=(
+        hyprland hypridle stow kitty jq
+        brightnessctl acpi upower playerctl polkit-gnome
+        network-manager-applet pipewire pipewire-pulse wireplumber
+        ttf-font-awesome nautilus qt5ct qt6ct kvantum nwg-look firefox
+        papirus-icon-theme breeze-icons adw-gtk3 swww
+    )
+
+    sudo pacman -S --needed --noconfirm "${PACMAN_PKGS[@]}"
+
+    AUR_HELPER=""
+    if command -v yay &>/dev/null; then
+        AUR_HELPER="yay"
+    elif command -v paru &>/dev/null; then
+        AUR_HELPER="paru"
+    else
+        echo "==> Installing yay AUR helper..."
+        sudo pacman -S --needed --noconfirm git base-devel
+        git clone https://aur.archlinux.org/yay-bin.git /tmp/yay-bin
+        (cd /tmp/yay-bin && makepkg -si --noconfirm)
+        rm -rf /tmp/yay-bin
+        AUR_HELPER="yay"
+    fi
+
+    AUR_PKGS=(
+        aylurs-gtk-shell
+        libastal-io libastal-hyprland libastal-battery
+        libastal-network libastal-bluetooth libastal-wireplumber
+        libastal-tray libastal-notifd libastal-mpris libastal-apps
+        walker-bin cliphist ttf-jetbrains-mono-nerd
+        catppuccin-gtk-theme-mocha rose-pine-gtk-theme-full nordic-theme
+    )
+
+    echo "==> Installing AUR desktop shell & utility packages via $AUR_HELPER..."
+    "$AUR_HELPER" -S --needed --noconfirm "${AUR_PKGS[@]}"
+else
+    echo "==> Note: pacman not found (running non-Arch OS). Skipping automatic package manager installation."
+fi
+
+# 2. Target directories in $HOME
+mkdir -p "$HOME/.config"
+mkdir -p "$HOME/.local/bin"
+
+# 3. Executable permissions on scripts
+if [ -d "$DOTFILES_DIR/scripts/.local/bin" ]; then
+    chmod +x "$DOTFILES_DIR/scripts/.local/bin/"* 2>/dev/null || true
+fi
+chmod +x "$DOTFILES_DIR/install.sh" 2>/dev/null || true
+
+# 4. Default active theme symlink
+THEMES_DIR="$DOTFILES_DIR/themes/.config/themes"
+if [ -d "$THEMES_DIR/rose-pine" ] && [ ! -e "$THEMES_DIR/active" ]; then
+    echo "==> Linking default theme 'rose-pine' as active..."
+    ln -sfn rose-pine "$THEMES_DIR/active"
+fi
+
+# 5. Stow packages into $HOME
+PACKAGES=(hypr ags kitty walker gtk themes scripts)
+
+for pkg in "${PACKAGES[@]}"; do
+    if [ -d "$pkg" ]; then
+        echo "==> Stowing package: $pkg"
+        stow -R -v -t "$HOME" "$pkg" 2>/dev/null || stow -v -t "$HOME" "$pkg"
+    fi
+done
+
+echo "=========================================="
+echo "==> System Packages & Dotfiles Installation Complete!"
+echo "==> Launch Hyprland to enjoy your rice!"
+echo "=========================================="

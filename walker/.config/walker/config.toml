@@ -1,0 +1,14 @@
+placeholder = "Search apps, files, commands..."
+notify_on_empty = false
+show_initial_entries = true
+
+[ui]
+fullscreen = false
+width = 600
+height = 400
+
+[providers]
+applications = true
+cliphist = true
+commands = true
+finder = true

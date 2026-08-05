@@ -1,0 +1,56 @@
+.bar-window {
+    background-color: transparent;
+}
+
+.bar {
+    background-color: rgba($base, 0.92);
+    border-bottom: 1px solid rgba($overlay, 0.6);
+    padding: 4px 14px;
+    color: $text;
+    box-shadow: none;
+
+    .module {
+        background-color: rgba($surface, 0.5);
+        border: 1px solid rgba($overlay, 0.4);
+        border-radius: 6px;
+        padding: 4px 12px;
+        margin: 0 4px;
+        color: $text;
+        font-weight: 500;
+        font-size: 13px;
+        box-shadow: none;
+    }
+
+    .menu-btn, .quick-settings-btn {
+        &:hover {
+            background-color: $overlay;
+            border-color: rgba($accent, 0.5);
+        }
+    }
+
+    .workspaces {
+        background-color: transparent;
+
+        .workspace-btn {
+            background-color: rgba($surface, 0.4);
+            border: 1px solid rgba($overlay, 0.3);
+            border-radius: 6px;
+            padding: 4px 10px;
+            margin: 0 2px;
+            color: $subtle;
+            font-weight: 600;
+            font-size: 12px;
+
+            &.active {
+                background-color: $accent;
+                color: $base;
+                border-color: $accent;
+            }
+
+            &:hover:not(.active) {
+                background-color: $overlay;
+                color: $text;
+            }
+        }
+    }
+}

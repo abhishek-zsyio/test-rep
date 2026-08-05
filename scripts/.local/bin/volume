@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Volume wrapper script using WirePlumber (wpctl)
+set -euo pipefail
+
+case "${1:-}" in
+    up)
+        wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+
+        ags request "osd volume" 2>/dev/null || true
+        ;;
+    down)
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+        ags request "osd volume" 2>/dev/null || true
+        ;;
+    mute)
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+        ags request "osd volume" 2>/dev/null || true
+        ;;
+    *)
+        echo "Usage: volume {up|down|mute}"
+        exit 1
+        ;;
+esac

@@ -1,0 +1,17 @@
+@import "colors";
+
+@import "components/bar";
+@import "components/notifications";
+@import "components/dock";
+@import "components/lockscreen";
+@import "components/osd";
+@import "components/control-center";
+@import "components/theme-picker";
+@import "components/overview";
+@import "components/screenshot";
+@import "components/spotlight";
+
+* {
+    font-family: "Inter", "JetBrains Mono Nerd Font", sans-serif;
+    box-sizing: border-box;
+}

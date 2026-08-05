@@ -1,0 +1,16 @@
+#window {
+    background-color: rgba(40, 40, 40, 0.95);
+    border: 1px solid #fe8019;
+    border-radius: 8px;
+    color: #ebdbb2;
+}
+#entry {
+    background-color: #3c3836;
+    color: #ebdbb2;
+    border: 1px solid #504945;
+    border-radius: 6px;
+}
+#item:selected {
+    background-color: #504945;
+    color: #fe8019;
+}

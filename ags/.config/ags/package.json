@@ -1,0 +1,10 @@
+{
+  "name": "astal-desktop-shell",
+  "version": "1.0.0",
+  "description": "Unified Astal/AGS desktop shell for Hyprland",
+  "main": "app.ts",
+  "type": "module",
+  "dependencies": {
+    "astal": "^0.1.0"
+  }
+}

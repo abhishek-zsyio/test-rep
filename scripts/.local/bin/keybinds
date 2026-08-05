@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Quick Hyprland Keybindings Viewer / Searcher via Walker
+set -euo pipefail
+
+KEYBINDS_FILE="$HOME/.config/hypr/conf/keybindings.conf"
+
+if [ -f "$KEYBINDS_FILE" ]; then
+    grep -E '^bind|^binde|^bindl|^bindel|^bindm' "$KEYBINDS_FILE" | \
+        sed 's/bind[a-z]* = //g' | \
+        sed 's/#/ ➔ /g' | \
+        walker --dmenu --placeholder "Search Keybindings..." 2>/dev/null || true
+else
+    hyprctl binds -j 2>/dev/null | jq -r '.[] | "\(.modmask) + \(.key) ➔ \(.dispatcher) \(.arg)"' | \
+        walker --dmenu --placeholder "Search Keybindings..." 2>/dev/null || true
+fi

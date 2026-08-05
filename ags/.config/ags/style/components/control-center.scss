@@ -1,0 +1,168 @@
+.control-center {
+    background-color: rgba($base, 0.96);
+    border: 2px solid $text;
+    border-radius: 12px;
+    padding: 18px;
+    margin: 10px;
+    color: $text;
+    width: 330px;
+
+    .header {
+        margin-bottom: 12px;
+
+        .header-title {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .icon-btn {
+            background-color: $surface;
+            border: 1px solid $overlay;
+            border-radius: 6px;
+            padding: 4px 10px;
+            color: $text;
+
+            &:hover {
+                background-color: $red;
+                color: $base;
+            }
+        }
+    }
+
+    .toggles-grid {
+        margin-bottom: 10px;
+    }
+
+    .toggle-btn {
+        background-color: $surface;
+        border: 1px solid $overlay;
+        border-radius: 8px;
+        padding: 10px;
+        margin: 3px;
+        color: $text;
+        font-weight: 600;
+
+        &.active {
+            background-color: $accent;
+            color: $base;
+            border-color: $accent;
+        }
+
+        &:hover:not(.active) {
+            background-color: $overlay;
+        }
+    }
+
+    .sliders-section {
+        background-color: $surface;
+        border: 1px solid $overlay;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .media-card {
+        background-color: $surface;
+        border: 1px solid $overlay;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+
+        .media-title {
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .media-artist {
+            color: $subtle;
+            font-size: 11px;
+            margin-bottom: 6px;
+        }
+
+        .media-controls {
+            button {
+                background-color: $overlay;
+                border-radius: 6px;
+                padding: 4px 10px;
+                margin: 0 3px;
+                color: $text;
+
+                &:hover {
+                    background-color: $accent;
+                    color: $base;
+                }
+            }
+        }
+    }
+
+    .notifications-section {
+        background-color: $surface;
+        border: 1px solid $overlay;
+        border-radius: 8px;
+        padding: 10px;
+        margin-bottom: 10px;
+
+        .notif-header {
+            margin-bottom: 6px;
+
+            .notif-title {
+                font-weight: 700;
+                font-size: 13px;
+            }
+
+            .clear-btn {
+                background-color: $overlay;
+                border-radius: 4px;
+                padding: 2px 8px;
+                font-size: 11px;
+                color: $text;
+
+                &:hover {
+                    background-color: $red;
+                    color: $base;
+                }
+            }
+        }
+
+        .notif-item {
+            background-color: $overlay;
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 6px;
+
+            .summary {
+                font-weight: 600;
+                font-size: 12px;
+            }
+
+            .body {
+                color: $subtle;
+                font-size: 11px;
+            }
+        }
+
+        .empty-notif {
+            color: $subtle;
+            font-size: 11px;
+            padding: 12px 0;
+        }
+    }
+
+    .power-actions {
+        button {
+            background-color: $surface;
+            border: 1px solid $overlay;
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin: 2px;
+            color: $text;
+            font-size: 11px;
+            font-weight: 600;
+
+            &:hover {
+                background-color: $accent;
+                color: $base;
+            }
+        }
+    }
+}

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Brightness wrapper script using brightnessctl
+set -euo pipefail
+
+case "${1:-}" in
+    up)
+        brightnessctl set 5%+
+        ags request "osd brightness" 2>/dev/null || true
+        ;;
+    down)
+        brightnessctl set 5%-
+        ags request "osd brightness" 2>/dev/null || true
+        ;;
+    *)
+        echo "Usage: brightness {up|down}"
+        exit 1
+        ;;
+esac

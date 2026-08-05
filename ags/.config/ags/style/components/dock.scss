@@ -1,0 +1,19 @@
+.dock {
+    background-color: rgba($base, 0.75);
+    border: 1px solid rgba($accent, 0.25);
+    border-radius: 20px;
+    padding: 8px 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+
+    .dock-item {
+        padding: 8px;
+        margin: 0 6px;
+        border-radius: 14px;
+
+        &:hover {
+            background-color: rgba($overlay, 0.6);
+            border: 1px solid rgba($accent, 0.3);
+        }
+    }
+}
