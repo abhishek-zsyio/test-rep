@@ -13,7 +13,7 @@ if command -v pacman &>/dev/null; then
     echo "==> Arch Linux detected. Installing official system packages..."
     
     PACMAN_PKGS=(
-        hyprland hypridle stow kitty alacritty foot jq dart-sass spice-vdagent
+        hyprland hypridle stow kitty alacritty foot jq dart-sass spice-vdagent qemu-guest-agent wl-clipboard
         brightnessctl acpi upower playerctl polkit-gnome
         network-manager-applet pipewire pipewire-pulse wireplumber
         ttf-font-awesome nautilus qt5ct qt6ct kvantum nwg-look firefox
@@ -21,6 +21,7 @@ if command -v pacman &>/dev/null; then
     )
 
     sudo pacman -S --needed --noconfirm "${PACMAN_PKGS[@]}"
+    sudo systemctl enable --now spice-vdagentd qemu-guest-agent 2>/dev/null || true
 
     AUR_HELPER=""
     if command -v yay &>/dev/null; then
