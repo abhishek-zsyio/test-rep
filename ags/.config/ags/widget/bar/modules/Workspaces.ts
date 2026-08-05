@@ -1,6 +1,6 @@
 import { Widget } from "astal/gtk3";
 import { bind } from "astal/gtk3";
-import hyprland from "../../services/hyprland";
+import hyprland from "../../../services/hyprland";
 
 export function Workspaces() {
     const activeWs = bind(hyprland, "focusedWorkspace");

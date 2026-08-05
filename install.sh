@@ -19,7 +19,7 @@ if command -v pacman &>/dev/null; then
     echo "==> Arch Linux detected. Installing official system packages..."
     
     PACMAN_PKGS=(
-        hyprland hypridle stow kitty alacritty foot jq dart-sass spice-vdagent qemu-guest-agent wl-clipboard
+        hyprland hypridle stow kitty alacritty foot jq dart-sass nodejs npm spice-vdagent qemu-guest-agent wl-clipboard
         brightnessctl acpi upower playerctl polkit-gnome
         network-manager-applet pipewire pipewire-pulse wireplumber
         ttf-font-awesome nautilus qt5ct qt6ct kvantum nwg-look firefox
@@ -101,6 +101,12 @@ ln -sfn "$HOME/.config/themes/active/kitty.conf" "$HOME/.config/kitty/colors.con
 ln -sfn "$HOME/.config/themes/active/walker.css" "$HOME/.config/walker/colors.css"
 ln -sfn "$HOME/.config/themes/active/gtk3-settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
 ln -sfn "$HOME/.config/themes/active/gtk4-settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
+
+# 7.5 Install AGS JS dependencies
+if command -v npm &>/dev/null && [ -d "$HOME/.config/ags" ]; then
+    echo "==> Installing AGS / Astal JS dependencies..."
+    (cd "$HOME/.config/ags" && npm install --silent 2>/dev/null || true)
+fi
 
 # 8. Ensure ~/.local/bin is in PATH
 if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
