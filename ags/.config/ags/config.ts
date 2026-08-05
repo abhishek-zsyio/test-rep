@@ -1,3 +1,4 @@
+import { App } from "astal/gtk3";
 import "./app";
 
 export const CONFIG = {
