@@ -1,3 +1,5 @@
+import "./app";
+
 export const CONFIG = {
     barHeight: 36,
     barGap: 8,
