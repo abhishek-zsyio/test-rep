@@ -13,7 +13,7 @@ if command -v pacman &>/dev/null; then
     echo "==> Arch Linux detected. Installing official system packages..."
     
     PACMAN_PKGS=(
-        hyprland hypridle stow kitty alacritty foot jq
+        hyprland hypridle stow kitty alacritty foot jq dart-sass
         brightnessctl acpi upower playerctl polkit-gnome
         network-manager-applet pipewire pipewire-pulse wireplumber
         ttf-font-awesome nautilus qt5ct qt6ct kvantum nwg-look firefox
