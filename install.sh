@@ -110,6 +110,12 @@ if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
     export PATH="$HOME/.local/bin:$PATH"
 fi
 
+# 9. Reload Hyprland configuration if running
+if command -v hyprctl &>/dev/null; then
+    echo "==> Reloading Hyprland configuration..."
+    hyprctl reload 2>/dev/null || true
+fi
+
 echo "=========================================="
 echo "==> System Packages & Dotfiles Installation Complete!"
 echo "==> Launch Hyprland to enjoy your rice!"
