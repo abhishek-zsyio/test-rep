@@ -8,6 +8,12 @@ echo "=========================================="
 echo "==> Setting up Hyprland + AGS Dotfiles Rice..."
 echo "=========================================="
 
+# 0. Self-update repository if git repo
+if [ -d ".git" ]; then
+    echo "==> Fetching latest dotfiles updates from GitHub..."
+    git pull origin main 2>/dev/null || true
+fi
+
 # 1. Package Installation (Arch Linux detection)
 if command -v pacman &>/dev/null; then
     echo "==> Arch Linux detected. Installing official system packages..."
