@@ -39,6 +39,8 @@ Subsystems symlink directly into `active`:
 Use the `theme-switch` command (or the visual AGS Theme Picker widget via `SUPER + A` or `SUPER + SHIFT + T`):
 
 ```bash
+theme-switch ghibli-cream
+theme-switch vercel
 theme-switch rose-pine
 theme-switch gruvbox
 theme-switch catppuccin
