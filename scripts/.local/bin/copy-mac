@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Copy text or command output from Arch VM directly to macOS clipboard
+
+if [ -p /dev/stdin ]; then
+    cat | wl-copy 2>/dev/null || true
+    cat | xclip -selection clipboard 2>/dev/null || true
+elif [ -n "$1" ]; then
+    echo -n "$1" | wl-copy 2>/dev/null || true
+    echo -n "$1" | xclip -selection clipboard 2>/dev/null || true
+fi
