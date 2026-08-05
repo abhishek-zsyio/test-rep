@@ -76,8 +76,8 @@ for pkg in hypr ags kitty walker themes; do
     fi
 done
 
-# 6. Stow packages into $HOME
-PACKAGES=(hypr ags kitty walker gtk themes scripts)
+# 6. Stow packages into $HOME (stow themes first so active symlink is present)
+PACKAGES=(themes hypr ags kitty walker gtk scripts)
 
 for pkg in "${PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
