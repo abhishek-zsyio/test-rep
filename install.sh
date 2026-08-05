@@ -44,7 +44,7 @@ if command -v pacman &>/dev/null; then
     fi
 
     AUR_PKGS=(
-        aylurs-gtk-shell-git
+        aylurs-gtk-shell
         libastal-git libastal-hyprland-git libastal-battery-git
         libastal-network-git libastal-bluetooth-git libastal-wireplumber-git
         libastal-tray-git libastal-notifd-git libastal-mpris-git libastal-apps-git
