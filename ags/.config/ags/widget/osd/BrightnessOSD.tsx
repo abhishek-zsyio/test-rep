@@ -1,5 +1,5 @@
 import { Widget, Astal } from "astal/gtk3";
-import { Variable } from "astal/gtk3";
+import { Variable, bind } from "astal";
 import { sh } from "../../utils/exec";
 
 export const brightnessVisible = Variable(false);
@@ -19,10 +19,10 @@ export function BrightnessOSD() {
             name="brightness-osd"
             anchor={Astal.WindowAnchor.BOTTOM}
             layer={Astal.Layer.OVERLAY}
-            visible={brightnessVisible()}
+            visible={bind(brightnessVisible)}
         >
             <box className="osd brightness-osd">
-                <label label={brightnessLevel().as((v) => `󰃠 Brightness: ${v}%`)} />
+                <label label={bind(brightnessLevel).as((v) => `󰃠 Brightness: ${v}%`)} />
             </box>
         </window>
     );

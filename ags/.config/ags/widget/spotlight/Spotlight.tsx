@@ -1,5 +1,5 @@
 import { Widget, Astal, App } from "astal/gtk3";
-import { Variable } from "astal/gtk3";
+import { Variable, bind } from "astal";
 import { sh } from "../../utils/exec";
 
 export function Spotlight() {
@@ -51,8 +51,8 @@ export function Spotlight() {
 
                 {/* Math Calculation Result */}
                 <box className="calc-result-container">
-                    {calcResult().as((res) =>
-                        res ? Widget.Label({ className: "calc-result", label: res }) : null
+                    {bind(calcResult).as((res) =>
+                        res ? Widget.Label({ className: "calc-result", label: res }) : Widget.Box({})
                     )}
                 </box>
 

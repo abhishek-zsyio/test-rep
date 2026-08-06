@@ -1,4 +1,4 @@
-import { Widget, Astal } from "astal/gtk3";
+import { Widget, Astal, App } from "astal/gtk3";
 import { sh } from "../../utils/exec";
 
 export function ScreenshotUI() {

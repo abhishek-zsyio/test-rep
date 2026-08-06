@@ -1,4 +1,4 @@
-import { Widget, Astal } from "astal/gtk3";
+import { Widget, Astal, App } from "astal/gtk3";
 import { bind } from "astal/gtk3";
 import hyprland from "../../services/hyprland";
 

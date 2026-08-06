@@ -1,4 +1,5 @@
 import { Widget, Astal } from "astal/gtk3";
+import { bind } from "astal";
 import { activeTheme, setTheme } from "../../services/theme";
 
 const THEMES = [
@@ -12,8 +13,6 @@ const THEMES = [
 ];
 
 export function ThemePicker() {
-    const current = activeTheme();
-
     return (
         <window
             name="theme-picker"
@@ -27,7 +26,7 @@ export function ThemePicker() {
                 <box className="themes-list">
                     {THEMES.map((theme) =>
                         Widget.Button({
-                            className: current.as((c) =>
+                            className: bind(activeTheme).as((c) =>
                                 `theme-card ${c === theme.id ? "selected" : ""}`
                             ),
                             onClicked: () => setTheme(theme.id),

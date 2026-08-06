@@ -19,15 +19,24 @@ if command -v pacman &>/dev/null; then
     echo "==> Arch Linux detected. Installing official system packages..."
     
     PACMAN_PKGS=(
-        hyprland hypridle stow kitty alacritty foot jq dart-sass nodejs npm spice-vdagent qemu-guest-agent wl-clipboard
-        brightnessctl acpi upower playerctl polkit-gnome
-        network-manager-applet pipewire pipewire-pulse wireplumber
+        hyprland hypridle hyprlock hyprpaper stow kitty alacritty foot jq dart-sass nodejs npm wl-clipboard
+        brightnessctl acpi upower playerctl polkit-gnome networkmanager network-manager-applet
+        bluez bluez-utils blueman power-profiles-daemon pamixer grim slurp libnotify
+        pipewire pipewire-pulse pipewire-alsa pipewire-jack wireplumber
         ttf-font-awesome nautilus qt5ct qt6ct kvantum nwg-look firefox
-        papirus-icon-theme breeze-icons swww
+        papirus-icon-theme breeze-icons swww xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
+        gsettings-desktop-schemas spice-vdagent qemu-guest-agent
     )
 
     sudo pacman -S --needed --noconfirm "${PACMAN_PKGS[@]}"
-    sudo systemctl enable --now spice-vdagentd qemu-guest-agent 2>/dev/null || true
+    
+    # Enable hardware daemons for real devices
+    sudo systemctl enable --now NetworkManager bluetooth power-profiles-daemon 2>/dev/null || true
+
+    # Enable VM daemons only if running inside a virtual machine
+    if command -v systemd-detect-virt &>/dev/null && systemd-detect-virt -q; then
+        sudo systemctl enable --now spice-vdagentd qemu-guest-agent 2>/dev/null || true
+    fi
 
     AUR_HELPER=""
     if command -v yay &>/dev/null; then

@@ -21,6 +21,8 @@ kitty @ set-colors -a -c "$THEMES_DIR/active/kitty.conf" 2>/dev/null || true
 # GTK / GNOME theme setting if specified
 if [ -f "$THEMES_DIR/active/qt-theme-name" ]; then
     gsettings set org.gnome.desktop.interface gtk-theme "$(cat "$THEMES_DIR/active/qt-theme-name")" 2>/dev/null || true
+fi
+
 # Initialize wallpaper for active theme (or solid fallback)
 wallpaper-switch init 2>/dev/null || true
 

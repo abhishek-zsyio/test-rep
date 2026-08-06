@@ -1,5 +1,6 @@
 import { Widget, Astal } from "astal/gtk3";
-import { Variable } from "astal/gtk3";
+import { Variable } from "astal";
+import GLib from "gi://GLib";
 import { sh } from "../../utils/exec";
 
 export function Lockscreen() {

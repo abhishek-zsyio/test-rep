@@ -4,7 +4,15 @@ import audio from "../../../services/audio";
 
 export function VolumeSlider() {
     const speaker = audio?.defaultSpeaker;
-    if (!speaker) return null;
+    if (!speaker) {
+        return Widget.Box({
+            className: "volume-slider-box",
+            children: [
+                Widget.Label({ label: "󰕾 " }),
+                Widget.Label({ label: "Audio Initializing..." }),
+            ],
+        });
+    }
 
     const volume = bind(speaker, "volume");
 
