@@ -56,7 +56,7 @@ ALL_PACKAGES=(
     ghostty
     kitty
     rofi-wayland
-    dolphing
+    dolphin
     nemo
     zathura
     cava
@@ -68,7 +68,7 @@ ALL_PACKAGES=(
     bat
     bc
     libnotify
-    pulseaudio-utils
+    libpulse
     luajit
     
     # Audio, Media & Brightness Controls

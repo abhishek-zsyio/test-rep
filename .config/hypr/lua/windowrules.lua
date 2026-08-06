@@ -56,7 +56,7 @@ hl.window_rule({
     float = true,
     no_focus = true,
     no_anim = true,
-    no_border = true,
+    border_size = 0,
     opacity = "0.1",
 })
 
@@ -68,7 +68,7 @@ hl.window_rule({
 
 -- Fix XWayland Dragging
 hl.window_rule({
-    match = { class = "^$", title = "^$", xwayland = 1, floating = 1, fullscreen = 0, pinned = 0 },
+    match = { class = "^$", title = "^$", xwayland = true },
     no_focus = true,
 })
 
