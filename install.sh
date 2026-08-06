@@ -94,62 +94,14 @@ fi
 # -----------------------------------------------------------------------------
 if [[ "$SKIP_PKG" != true ]]; then
     info "[1/4] Checking system dependencies..."
-    
-    REQUIRED_PACKAGES=(
-        hyprland waybar swaync kitty rofi nemo bat cava swappy stow
-        python python-gobject qt5ct qt6ct nwg-look brightnessctl pamixer
-        wireplumber playerctl swww mako zathura ttf-jetbrains-mono-nerd
-        ttf-font-awesome papirus-icon-theme bibata-cursor-theme
-    )
-    
-    MISSING_PACKAGES=()
-
-    if command -v pacman >/dev/null 2>&1; then
-        for pkg in "${REQUIRED_PACKAGES[@]}"; do
-            if ! pacman -Qq "$pkg" >/dev/null 2>&1; then
-                MISSING_PACKAGES+=("$pkg")
-            fi
-        done
-
-        if [ ${#MISSING_PACKAGES[@]} -gt 0 ]; then
-            warn "The following packages appear to be missing: ${MISSING_PACKAGES[*]}"
-            
-            INSTALL_PKGS=false
-            if [[ "$YES_MODE" == true ]]; then
-                INSTALL_PKGS=true
-            else
-                read -r -p "Would you like to install missing packages via pacman/AUR helper? [Y/n] " pkg_ans
-                case "$pkg_ans" in
-                    [nN][oO]|[nN])
-                        warn "Skipping package installation. Note that missing packages may affect functionality."
-                        ;;
-                    *)
-                        INSTALL_PKGS=true
-                        ;;
-                esac
-            fi
-
-            if [[ "$INSTALL_PKGS" == true ]]; then
-                AUR_HELPER=""
-                if command -v yay >/dev/null 2>&1; then
-                    AUR_HELPER="yay"
-                elif command -v paru >/dev/null 2>&1; then
-                    AUR_HELPER="paru"
-                fi
-
-                if [ -n "$AUR_HELPER" ]; then
-                    info "Installing packages using $AUR_HELPER..."
-                    "$AUR_HELPER" -S --needed --noconfirm "${MISSING_PACKAGES[@]}" || warn "Some packages could not be installed."
-                else
-                    info "Installing available official packages with pacman..."
-                    sudo pacman -S --needed --noconfirm "${MISSING_PACKAGES[@]}" || warn "Some pacman packages failed to install."
-                fi
-            fi
+    if [ -f "$DOTFILES_DIR/install_missing.sh" ]; then
+        if [[ "$YES_MODE" == true ]]; then
+            bash "$DOTFILES_DIR/install_missing.sh" --yes
         else
-            success "All core required packages are installed!"
+            bash "$DOTFILES_DIR/install_missing.sh"
         fi
     else
-        warn "pacman not detected on this system. Skipping automated package installation."
+        warn "install_missing.sh script not found. Skipping automated package installation."
     fi
 else
     info "[1/4] Skipping package installation check (--no-pkg specified)."

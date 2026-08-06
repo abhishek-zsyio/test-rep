@@ -79,20 +79,22 @@ hl.config({
             text_color = "rgba(1f1f28ff)",
         },
     },
-
-    plugin = {
-        hyprtrails = {
-            color = "rgba(cba6f790)",
-        },
-        hyprexpo = {
-            columns = 3,
-            gap_size = 5,
-            bg_col = "rgb(111111)",
-            workspace_method = "center current",
-            enable_gesture = true,
-            gesture_fingers = 3,
-            gesture_distance = 300,
-            gesture_positive = true,
-        },
-    },
 })
+
+-- Plugin Configurations (hl.plugin API)
+if hl.plugin then
+    if hl.plugin.hyprtrails then
+        hl.plugin.hyprtrails.color = "rgba(cba6f790)"
+    end
+    if hl.plugin.hyprexpo then
+        hl.plugin.hyprexpo.columns = 3
+        hl.plugin.hyprexpo.gap_size = 5
+        hl.plugin.hyprexpo.bg_col = "rgb(111111)"
+        hl.plugin.hyprexpo.workspace_method = "center current"
+        hl.plugin.hyprexpo.enable_gesture = true
+        hl.plugin.hyprexpo.gesture_fingers = 3
+        hl.plugin.hyprexpo.gesture_distance = 300
+        hl.plugin.hyprexpo.gesture_positive = true
+    end
+end
+

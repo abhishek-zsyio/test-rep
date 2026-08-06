@@ -73,7 +73,7 @@ hl.window_rule({
 })
 
 -- Layer Rules
-hl.layer_rule({ target = "rofi", blur = true, ignorezero = true, ignorealpha = 0.5 })
-hl.layer_rule({ target = "notifications", blur = true, ignorezero = true, ignorealpha = 0.5 })
-hl.layer_rule({ target = "logout_dialog", blur = true })
-hl.layer_rule({ target = "waybar", blur = true })
+hl.layer_rule({ match = { namespace = "rofi" }, blur = true, ignore_zero = true, ignore_alpha = 0.5 })
+hl.layer_rule({ match = { namespace = "notifications" }, blur = true, ignore_zero = true, ignore_alpha = 0.5 })
+hl.layer_rule({ match = { namespace = "logout_dialog" }, blur = true })
+hl.layer_rule({ match = { namespace = "waybar" }, blur = true })
