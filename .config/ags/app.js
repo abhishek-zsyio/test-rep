@@ -25,7 +25,31 @@ try {
 const sidePanelWindow = SidePanel();
 const notificationsWindow = NotificationsPopup();
 
-sidePanelWindow.show_all();
-notificationsWindow.show_all();
+// Keep sidepanel hidden on startup
+sidePanelWindow.hide();
+notificationsWindow.hide();
+
+// Fast IPC Toggle Listener via Runtime File Monitor
+const runtimeDir = GLib.get_user_runtime_dir() || "/tmp";
+const toggleFilePath = runtimeDir + "/ags_sidepanel_toggle";
+const toggleFile = Gio.File.new_for_path(toggleFilePath);
+
+try {
+    // Touch file if not exists
+    if (!toggleFile.query_exists(null)) {
+        toggleFile.create(Gio.FileCreateFlags.NONE, null);
+    }
+
+    const monitor = toggleFile.monitor_file(Gio.FileMonitorFlags.NONE, null);
+    monitor.connect("changed", () => {
+        if (sidePanelWindow.is_visible()) {
+            sidePanelWindow.hide();
+        } else {
+            sidePanelWindow.show_all();
+        }
+    });
+} catch (e) {
+    console.error("Failed to setup toggle listener:", e);
+}
 
 Gtk.main();
