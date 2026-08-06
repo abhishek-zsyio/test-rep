@@ -1,1 +1,0 @@
-../../themes/active/hypr.lua
