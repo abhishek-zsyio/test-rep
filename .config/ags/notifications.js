@@ -1,65 +1,54 @@
-import Widget from 'ags/widget';
-import Notifications from 'ags/service/notifications';
+import { App, Gtk } from "astal/gtk3";
+import Notif from "gi://AstalNotif";
 
-const PopupItem = (n) => Widget.EventBox({
-    onPrimaryClick: () => n.dismiss(),
-    child: Widget.Box({
-        className: `notification-toast ${n.urgency || 'normal'}`,
-        vertical: true,
-        children: [
-            Widget.Box({
-                className: 'toast-header',
-                children: [
-                    Widget.Label({
-                        className: 'toast-app',
-                        xalign: 0,
-                        hexpand: true,
-                        label: n.app_name || 'System',
-                    }),
-                    Widget.Button({
-                        className: 'toast-close',
-                        onClicked: () => n.close(),
-                        child: Widget.Label({ label: '✕' }),
-                    }),
-                ],
-            }),
-            Widget.Label({
-                className: 'toast-summary',
-                xalign: 0,
-                truncate: 'end',
-                label: n.summary || '',
-            }),
-            Widget.Label({
-                className: 'toast-body',
-                xalign: 0,
-                wrap: true,
-                label: n.body || '',
-                visible: Boolean(n.body),
-            }),
-        ],
-    }),
-});
+const notif = Notif.get_default();
 
-export const NotificationsPopup = () => Widget.Window({
-    name: 'notifications-popup',
-    anchor: ['top', 'right'],
-    layer: 'overlay',
-    child: Widget.Box({
-        className: 'notifications-popup-container',
-        vertical: true,
+export function NotificationsPopup() {
+    const box = new Gtk.Box({
+        className: "notifications-popup-container",
+        orientation: Gtk.Orientation.VERTICAL,
         spacing: 10,
-        setup: self => self.hook(Notifications, (_, id) => {
-            if (id && Notifications.getNotification(id)) {
-                const n = Notifications.getNotification(id);
-                if (n && !Notifications.dnd) {
-                    const popup = PopupItem(n);
-                    self.pack_start(popup, false, false, 0);
-                    self.show_all();
-                    setTimeout(() => {
-                        popup.destroy();
-                    }, 5000);
-                }
+    });
+
+    if (notif) {
+        notif.connect("notified", (_, id) => {
+            const n = notif.get_notification(id);
+            if (n && !notif.dont_disturb) {
+                const toast = new Gtk.Box({
+                    className: "notification-toast",
+                    orientation: Gtk.Orientation.VERTICAL,
+                });
+                const appLbl = new Gtk.Label({
+                    className: "toast-app",
+                    label: n.appName || "System",
+                    xalign: 0,
+                });
+                const summaryLbl = new Gtk.Label({
+                    className: "toast-summary",
+                    label: n.summary || "",
+                    xalign: 0,
+                });
+
+                toast.pack_start(appLbl, false, false, 0);
+                toast.pack_start(summaryLbl, false, false, 0);
+                box.pack_start(toast, false, false, 0);
+                box.show_all();
+
+                setTimeout(() => {
+                    box.remove(toast);
+                }, 5000);
             }
-        }, 'notified'),
-    }),
-});
+        });
+    }
+
+    const win = new Gtk.Window({
+        name: "notifications-popup",
+        type: Gtk.WindowType.TOPLEVEL,
+        decorated: false,
+        resizable: false,
+    });
+    win.add(box);
+
+    App.add_window(win);
+    return win;
+}

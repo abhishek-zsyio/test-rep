@@ -1,420 +1,345 @@
-import Widget from 'ags/widget';
-import Audio from 'ags/service/audio';
-import Notifications from 'ags/service/notifications';
-import Mpris from 'ags/service/mpris';
-import Network from 'ags/service/network';
-import Bluetooth from 'ags/service/bluetooth';
-import Utils from 'ags/utils';
-import App from 'ags';
+import { App, Gtk, Gdk } from "astal/gtk3";
+import { Variable, exec, execAsync } from "astal";
+import Notif from "gi://AstalNotif";
+import Mpris from "gi://AstalMpris";
+import Wp from "gi://AstalWp";
+import Network from "gi://AstalNetwork";
+import Bluetooth from "gi://AstalBluetooth";
 
-// --- Header Widget ---
-const Header = () => Widget.Box({
-    className: 'sidepanel-header',
-    children: [
-        Widget.Box({
-            vertical: true,
-            hexpand: true,
-            children: [
-                Widget.Label({
-                    className: 'header-user',
-                    xalign: 0,
-                    label: Utils.exec('whoami').toUpperCase(),
-                }),
-                Widget.Label({
-                    className: 'header-clock',
-                    xalign: 0,
-                    setup: self => self.poll(1000, self => {
-                        self.label = Utils.exec('date "+%A, %B %d • %H:%M"');
-                    }),
-                }),
-            ],
-        }),
-        Widget.Box({
-            className: 'header-actions',
-            spacing: 8,
-            children: [
-                Widget.Button({
-                    className: 'icon-btn lock-btn',
-                    onClicked: () => {
-                        App.closeWindow('sidepanel');
-                        Utils.execAsync('hyprlock').catch(() => {});
-                    },
-                    child: Widget.Label({ label: '🔒' }),
-                    tooltipText: 'Lock Screen',
-                }),
-                Widget.Button({
-                    className: 'icon-btn power-btn',
-                    onClicked: () => {
-                        App.closeWindow('sidepanel');
-                        Utils.execAsync('pkill -x rofi || ~/.config/rofi/powermenu/powermenu.sh').catch(() => {});
-                    },
-                    child: Widget.Label({ label: '⏻' }),
-                    tooltipText: 'Power Menu',
-                }),
-            ],
-        }),
-    ],
-});
+const notif = Notif.get_default();
+const mpris = Mpris.get_default();
+const audio = Wp.get_default()?.audio;
+const network = Network.get_default();
+const bluetooth = Bluetooth.get_default();
 
-// --- Quick Toggles (2x2 Box Layout) ---
-const QuickToggles = () => Widget.Box({
-    className: 'quick-toggles-container',
-    vertical: true,
-    spacing: 8,
-    children: [
-        // Row 1: WiFi & Bluetooth
-        Widget.Box({
-            homogeneous: true,
-            spacing: 8,
-            children: [
-                // WiFi Toggle
-                Widget.Button({
-                    className: 'toggle-btn',
-                    onClicked: () => {
-                        if (Network.wifi) {
-                            Network.wifi.enabled = !Network.wifi.enabled;
-                        }
-                    },
-                    setup: self => self.hook(Network, () => {
-                        const active = Network.wifi?.enabled;
-                        self.toggleClassName('active', Boolean(active));
-                    }),
-                    child: Widget.Box({
-                        spacing: 8,
-                        children: [
-                            Widget.Label({ label: '󰤨' }),
-                            Widget.Label({
-                                label: 'Wi-Fi',
-                                setup: self => self.hook(Network, () => {
-                                    self.label = Network.wifi?.ssid || (Network.wifi?.enabled ? 'Disconnected' : 'Off');
-                                }),
-                            }),
-                        ],
-                    }),
-                }),
-                // Bluetooth Toggle
-                Widget.Button({
-                    className: 'toggle-btn',
-                    onClicked: () => {
-                        if (Bluetooth) {
-                            Bluetooth.enabled = !Bluetooth.enabled;
-                        }
-                    },
-                    setup: self => self.hook(Bluetooth, () => {
-                        self.toggleClassName('active', Boolean(Bluetooth.enabled));
-                    }),
-                    child: Widget.Box({
-                        spacing: 8,
-                        children: [
-                            Widget.Label({ label: '󰂯' }),
-                            Widget.Label({
-                                label: 'Bluetooth',
-                                setup: self => self.hook(Bluetooth, () => {
-                                    self.label = Bluetooth.enabled ? (Bluetooth.connected_devices?.length ? `${Bluetooth.connected_devices.length} Connected` : 'On') : 'Off';
-                                }),
-                            }),
-                        ],
-                    }),
-                }),
-            ],
-        }),
-        // Row 2: Mic & DND
-        Widget.Box({
-            homogeneous: true,
-            spacing: 8,
-            children: [
-                // Mic Mute Toggle
-                Widget.Button({
-                    className: 'toggle-btn',
-                    onClicked: () => {
-                        if (Audio.microphone) {
-                            Audio.microphone.is_muted = !Audio.microphone.is_muted;
-                        }
-                    },
-                    setup: self => self.hook(Audio, () => {
-                        const muted = Audio.microphone?.is_muted;
-                        self.toggleClassName('active', !muted);
-                    }),
-                    child: Widget.Box({
-                        spacing: 8,
-                        children: [
-                            Widget.Label({ label: '󰍬' }),
-                            Widget.Label({
-                                label: 'Mic',
-                                setup: self => self.hook(Audio, () => {
-                                    self.label = Audio.microphone?.is_muted ? 'Muted' : 'Active';
-                                }),
-                            }),
-                        ],
-                    }),
-                }),
-                // Do Not Disturb Toggle
-                Widget.Button({
-                    className: 'toggle-btn',
-                    onClicked: () => {
-                        Notifications.dnd = !Notifications.dnd;
-                    },
-                    setup: self => self.hook(Notifications, () => {
-                        self.toggleClassName('active', Notifications.dnd);
-                    }),
-                    child: Widget.Box({
-                        spacing: 8,
-                        children: [
-                            Widget.Label({ label: '󰂛' }),
-                            Widget.Label({
-                                label: 'DND',
-                                setup: self => self.hook(Notifications, () => {
-                                    self.label = Notifications.dnd ? 'On' : 'Off';
-                                }),
-                            }),
-                        ],
-                    }),
-                }),
-            ],
-        }),
-    ],
-});
+// --- Header ---
+function Header() {
+    const userLabel = new Gtk.Label({
+        className: "header-user",
+        xalign: 0,
+        label: exec("whoami").toUpperCase(),
+    });
 
-// --- Sliders (Volume & Brightness) ---
-const VolumeSlider = () => Widget.Box({
-    className: 'slider-box',
-    children: [
-        Widget.Button({
-            className: 'slider-icon-btn',
-            onClicked: () => {
-                if (Audio.speaker) {
-                    Audio.speaker.is_muted = !Audio.speaker.is_muted;
-                }
-            },
-            child: Widget.Label({
-                label: '󰕾',
-                setup: self => self.hook(Audio, () => {
-                    self.label = Audio.speaker?.is_muted ? '󰖁' : '󰕾';
-                }),
-            }),
-        }),
-        Widget.Slider({
-            className: 'slider',
-            hexpand: true,
-            drawValue: false,
-            onChange: ({ value }) => {
-                if (Audio.speaker) {
-                    Audio.speaker.volume = value;
-                }
-            },
-            setup: self => self.hook(Audio, () => {
-                if (Audio.speaker) {
-                    self.value = Audio.speaker.volume || 0;
-                }
-            }),
-        }),
-    ],
-});
+    const clockLabel = new Gtk.Label({
+        className: "header-clock",
+        xalign: 0,
+    });
 
-const BrightnessSlider = () => Widget.Box({
-    className: 'slider-box',
-    children: [
-        Widget.Label({
-            className: 'slider-icon',
-            label: '󰃟',
-        }),
-        Widget.Slider({
-            className: 'slider',
-            hexpand: true,
-            drawValue: false,
-            onChange: ({ value }) => {
-                const percent = Math.round(value * 100);
-                Utils.execAsync(`brightnessctl s ${percent}%`).catch(() => {});
-            },
-            setup: self => self.poll(2000, self => {
-                Utils.execAsync('brightnessctl g')
-                    .then(current => {
-                        Utils.execAsync('brightnessctl m')
-                            .then(max => {
-                                if (Number(max) > 0) {
-                                    self.value = Number(current) / Number(max);
-                                }
-                            }).catch(() => {});
-                    }).catch(() => {});
-            }),
-        }),
-    ],
-});
+    const timeVar = Variable("").poll(1000, () => exec('date "+%A, %B %d • %H:%M"'));
+    timeVar.subscribe(val => clockLabel.set_text(val));
 
-// --- Media Player ---
-const MediaPlayer = () => Widget.Box({
-    className: 'media-player',
-    vertical: true,
-    setup: self => self.hook(Mpris, () => {
-        const players = Mpris.players;
-        self.visible = Boolean(players && players.length > 0);
-    }),
-    children: [
-        Widget.Box({
-            className: 'media-info',
-            spacing: 12,
-            children: [
-                Widget.Icon({
-                    className: 'media-art',
-                    size: 48,
-                    setup: self => self.hook(Mpris, () => {
-                        const player = Mpris.players[0];
-                        self.icon = player?.cover_path || 'audio-x-generic';
-                    }),
-                }),
-                Widget.Box({
-                    vertical: true,
-                    hexpand: true,
-                    children: [
-                        Widget.Label({
-                            className: 'media-title',
-                            xalign: 0,
-                            truncate: 'end',
-                            setup: self => self.hook(Mpris, () => {
-                                const player = Mpris.players[0];
-                                self.label = player ? (player.track_title || 'Unknown Title') : 'No Media';
-                            }),
-                        }),
-                        Widget.Label({
-                            className: 'media-artist',
-                            xalign: 0,
-                            truncate: 'end',
-                            setup: self => self.hook(Mpris, () => {
-                                const player = Mpris.players[0];
-                                self.label = player ? (player.track_artists?.join(', ') || 'Unknown Artist') : '';
-                            }),
-                        }),
-                    ],
-                }),
-            ],
-        }),
-        Widget.Box({
-            className: 'media-controls',
-            homogeneous: true,
-            children: [
-                Widget.Button({
-                    onClicked: () => Mpris.players[0]?.previous(),
-                    child: Widget.Label({ label: '󰒮' }),
-                }),
-                Widget.Button({
-                    onClicked: () => Mpris.players[0]?.playPause(),
-                    child: Widget.Label({
-                        label: '󰐊',
-                        setup: self => self.hook(Mpris, () => {
-                            const player = Mpris.players[0];
-                            self.label = player?.play_back_status === 'Playing' ? '󰏤' : '󰐊';
-                        }),
-                    }),
-                }),
-                Widget.Button({
-                    onClicked: () => Mpris.players[0]?.next(),
-                    child: Widget.Label({ label: '󰒝' }),
-                }),
-            ],
-        }),
-    ],
-});
+    const infoBox = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        hexpand: true,
+    });
+    infoBox.pack_start(userLabel, false, false, 0);
+    infoBox.pack_start(clockLabel, false, false, 0);
 
-// --- Notifications List ---
-const NotificationItem = (n) => Widget.Box({
-    className: `notification-item ${n.urgency || 'normal'}`,
-    vertical: true,
-    children: [
-        Widget.Box({
-            className: 'notification-item-header',
-            children: [
-                Widget.Label({
-                    className: 'notification-app',
+    const lockBtn = new Gtk.Button({
+        className: "icon-btn lock-btn",
+        label: "🔒",
+        tooltip_text: "Lock Screen",
+    });
+    lockBtn.connect("clicked", () => {
+        App.toggle_window("sidepanel");
+        execAsync("hyprlock").catch(() => {});
+    });
+
+    const powerBtn = new Gtk.Button({
+        className: "icon-btn power-btn",
+        label: "⏻",
+        tooltip_text: "Power Menu",
+    });
+    powerBtn.connect("clicked", () => {
+        App.toggle_window("sidepanel");
+        execAsync("pkill -x rofi || ~/.config/rofi/powermenu/powermenu.sh").catch(() => {});
+    });
+
+    const actionsBox = new Gtk.Box({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        spacing: 8,
+    });
+    actionsBox.pack_start(lockBtn, false, false, 0);
+    actionsBox.pack_start(powerBtn, false, false, 0);
+
+    const box = new Gtk.Box({
+        className: "sidepanel-header",
+        orientation: Gtk.Orientation.HORIZONTAL,
+    });
+    box.pack_start(infoBox, true, true, 0);
+    box.pack_start(actionsBox, false, false, 0);
+
+    return box;
+}
+
+// --- Quick Toggles ---
+function QuickToggles() {
+    const wifiBtn = new Gtk.Button({
+        className: "toggle-btn",
+        label: "󰤨  Wi-Fi",
+    });
+    wifiBtn.connect("clicked", () => {
+        if (network && network.wifi) {
+            network.wifi.set_enabled(!network.wifi.enabled);
+        }
+    });
+
+    const btBtn = new Gtk.Button({
+        className: "toggle-btn",
+        label: "󰂯  Bluetooth",
+    });
+    btBtn.connect("clicked", () => {
+        if (bluetooth) {
+            bluetooth.toggle();
+        }
+    });
+
+    const row1 = new Gtk.Box({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        homogeneous: true,
+        spacing: 8,
+    });
+    row1.pack_start(wifiBtn, true, true, 0);
+    row1.pack_start(btBtn, true, true, 0);
+
+    const micBtn = new Gtk.Button({
+        className: "toggle-btn",
+        label: "󰍬  Mic",
+    });
+    micBtn.connect("clicked", () => {
+        if (audio && audio.default_microphone) {
+            audio.default_microphone.set_mute(!audio.default_microphone.mute);
+        }
+    });
+
+    const dndBtn = new Gtk.Button({
+        className: "toggle-btn",
+        label: "󰂛  DND",
+    });
+    dndBtn.connect("clicked", () => {
+        if (notif) {
+            notif.set_dont_disturb(!notif.dont_disturb);
+        }
+    });
+
+    const row2 = new Gtk.Box({
+        orientation: Gtk.Orientation.HORIZONTAL,
+        homogeneous: true,
+        spacing: 8,
+    });
+    row2.pack_start(micBtn, true, true, 0);
+    row2.pack_start(dndBtn, true, true, 0);
+
+    const box = new Gtk.Box({
+        className: "quick-toggles-container",
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 8,
+    });
+    box.pack_start(row1, false, false, 0);
+    box.pack_start(row2, false, false, 0);
+
+    return box;
+}
+
+// --- Sliders ---
+function VolumeSlider() {
+    const iconBtn = new Gtk.Button({
+        className: "slider-icon-btn",
+        label: "󰕾",
+    });
+    iconBtn.connect("clicked", () => {
+        if (audio && audio.default_speaker) {
+            audio.default_speaker.set_mute(!audio.default_speaker.mute);
+        }
+    });
+
+    const scale = new Gtk.Scale({
+        className: "slider",
+        orientation: Gtk.Orientation.HORIZONTAL,
+        draw_value: false,
+        hexpand: true,
+    });
+    scale.set_range(0, 1);
+
+    if (audio && audio.default_speaker) {
+        scale.set_value(audio.default_speaker.volume || 0);
+        audio.default_speaker.connect("notify::volume", (spk) => {
+            scale.set_value(spk.volume);
+        });
+    }
+
+    scale.connect("value-changed", (sc) => {
+        if (audio && audio.default_speaker) {
+            audio.default_speaker.set_volume(sc.get_value());
+        }
+    });
+
+    const box = new Gtk.Box({
+        className: "slider-box",
+        orientation: Gtk.Orientation.HORIZONTAL,
+    });
+    box.pack_start(iconBtn, false, false, 0);
+    box.pack_start(scale, true, true, 0);
+
+    return box;
+}
+
+function BrightnessSlider() {
+    const iconLabel = new Gtk.Label({
+        className: "slider-icon",
+        label: "󰃟 ",
+    });
+
+    const scale = new Gtk.Scale({
+        className: "slider",
+        orientation: Gtk.Orientation.HORIZONTAL,
+        draw_value: false,
+        hexpand: true,
+    });
+    scale.set_range(0, 1);
+
+    const brightVar = Variable(0).poll(2000, () => {
+        try {
+            const cur = Number(exec("brightnessctl g"));
+            const max = Number(exec("brightnessctl m"));
+            return max > 0 ? cur / max : 0;
+        } catch (e) {
+            return 0;
+        }
+    });
+    brightVar.subscribe(val => scale.set_value(val));
+
+    scale.connect("value-changed", (sc) => {
+        const pct = Math.round(sc.get_value() * 100);
+        execAsync(`brightnessctl s ${pct}%`).catch(() => {});
+    });
+
+    const box = new Gtk.Box({
+        className: "slider-box",
+        orientation: Gtk.Orientation.HORIZONTAL,
+    });
+    box.pack_start(iconLabel, false, false, 0);
+    box.pack_start(scale, true, true, 0);
+
+    return box;
+}
+
+// --- Notifications Center ---
+function NotificationsCenter() {
+    const titleLabel = new Gtk.Label({
+        className: "notifications-title",
+        label: "Notifications",
+        xalign: 0,
+        hexpand: true,
+    });
+
+    const clearBtn = new Gtk.Button({
+        className: "clear-btn",
+        label: "Clear All 󰆴",
+    });
+
+    const listContainer = new Gtk.Box({
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 8,
+    });
+
+    const scroll = new Gtk.ScrolledWindow({
+        className: "notifications-scroll",
+        hscrollbar_policy: Gtk.PolicyType.NEVER,
+        vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
+        vexpand: true,
+    });
+    scroll.add(listContainer);
+
+    function updateList() {
+        listContainer.foreach(child => listContainer.remove(child));
+        const notifs = notif ? notif.get_notifications() : [];
+
+        if (notifs.length === 0) {
+            const emptyLabel = new Gtk.Label({
+                className: "empty-notifications",
+                label: "No Notifications",
+            });
+            listContainer.pack_start(emptyLabel, true, true, 0);
+        } else {
+            notifs.forEach(n => {
+                const item = new Gtk.Box({
+                    className: "notification-item",
+                    orientation: Gtk.Orientation.VERTICAL,
+                });
+                const appLbl = new Gtk.Label({
+                    className: "notification-app",
+                    label: n.appName || "System",
                     xalign: 0,
                     hexpand: true,
-                    label: n.app_name || 'System',
-                }),
-                Widget.Button({
-                    className: 'notification-close',
-                    onClicked: () => n.close(),
-                    child: Widget.Label({ label: '✕' }),
-                }),
-            ],
-        }),
-        Widget.Label({
-            className: 'notification-summary',
-            xalign: 0,
-            truncate: 'end',
-            label: n.summary || '',
-        }),
-        Widget.Label({
-            className: 'notification-body',
-            xalign: 0,
-            wrap: true,
-            label: n.body || '',
-            visible: Boolean(n.body),
-        }),
-    ],
-});
-
-const NotificationsCenter = () => Widget.Box({
-    className: 'notifications-center',
-    vertical: true,
-    children: [
-        Widget.Box({
-            className: 'notifications-header',
-            children: [
-                Widget.Label({
-                    className: 'notifications-title',
-                    label: 'Notifications',
-                    hexpand: true,
+                });
+                const summaryLbl = new Gtk.Label({
+                    className: "notification-summary",
+                    label: n.summary || "",
                     xalign: 0,
-                }),
-                Widget.Button({
-                    className: 'clear-btn',
-                    onClicked: () => Notifications.clear(),
-                    setup: self => self.hook(Notifications, () => {
-                        self.visible = Notifications.notifications.length > 0;
-                    }),
-                    child: Widget.Label({ label: 'Clear All 󰆴' }),
-                }),
-            ],
-        }),
-        Widget.Scrollable({
-            hscroll: 'never',
-            vscroll: 'automatic',
-            className: 'notifications-scroll',
-            vexpand: true,
-            child: Widget.Box({
-                vertical: true,
-                className: 'notifications-list',
-                spacing: 8,
-                setup: self => self.hook(Notifications, () => {
-                    self.children = Notifications.notifications.length > 0
-                        ? Notifications.notifications.map(NotificationItem)
-                        : [Widget.Label({
-                            className: 'empty-notifications',
-                            label: 'No Notifications',
-                        })];
-                }),
-            }),
-        }),
-    ],
-});
+                });
+                item.pack_start(appLbl, false, false, 0);
+                item.pack_start(summaryLbl, false, false, 0);
+                listContainer.pack_start(item, false, false, 0);
+            });
+        }
+        listContainer.show_all();
+    }
 
-// --- SidePanel Window Export ---
-export const SidePanel = () => Widget.Window({
-    name: 'sidepanel',
-    anchor: ['top', 'right', 'bottom'],
-    layer: 'top',
-    visible: false,
-    keymode: 'on-demand',
-    child: Widget.Box({
-        className: 'sidepanel-container',
-        vertical: true,
+    clearBtn.connect("clicked", () => {
+        if (notif) {
+            notif.get_notifications().forEach(n => n.dismiss());
+            updateList();
+        }
+    });
+
+    if (notif) {
+        notif.connect("notified", () => updateList());
+        notif.connect("resolved", () => updateList());
+    }
+
+    updateList();
+
+    const headerBox = new Gtk.Box({
+        className: "notifications-header",
+        orientation: Gtk.Orientation.HORIZONTAL,
+    });
+    headerBox.pack_start(titleLabel, true, true, 0);
+    headerBox.pack_start(clearBtn, false, false, 0);
+
+    const box = new Gtk.Box({
+        className: "notifications-center",
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 8,
+    });
+    box.pack_start(headerBox, false, false, 0);
+    box.pack_start(scroll, true, true, 0);
+
+    return box;
+}
+
+// --- SidePanel Window ---
+export function SidePanel() {
+    const content = new Gtk.Box({
+        className: "sidepanel-container",
+        orientation: Gtk.Orientation.VERTICAL,
         spacing: 14,
-        children: [
-            Header(),
-            QuickToggles(),
-            VolumeSlider(),
-            BrightnessSlider(),
-            MediaPlayer(),
-            NotificationsCenter(),
-        ],
-    }),
-});
+    });
+
+    content.pack_start(Header(), false, false, 0);
+    content.pack_start(QuickToggles(), false, false, 0);
+    content.pack_start(VolumeSlider(), false, false, 0);
+    content.pack_start(BrightnessSlider(), false, false, 0);
+    content.pack_start(NotificationsCenter(), true, true, 0);
+
+    const win = new Gtk.Window({
+        name: "sidepanel",
+        type: Gtk.WindowType.TOPLEVEL,
+        decorated: false,
+        resizable: false,
+    });
+    win.add(content);
+
+    App.add_window(win);
+    return win;
+}
