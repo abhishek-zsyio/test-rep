@@ -1,7 +1,11 @@
--- Hyprland Main Configuration (Lua Format v0.55+)
+-- Hyprland Main Configuration (Lua Format v0.56+)
 -- Abhishek's Hyprland Desktop Configuration
 
 local home = os.getenv("HOME") or ""
+local config_dir = home .. "/.config/hypr/"
+
+-- Ensure package.path includes ~/.config/hypr/ for require calls
+package.path = config_dir .. "?.lua;" .. config_dir .. "?/init.lua;" .. package.path
 
 local function load_file(path)
     local status, err = pcall(dofile, path)
