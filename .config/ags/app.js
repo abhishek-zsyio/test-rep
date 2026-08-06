@@ -5,6 +5,7 @@ import GLib from "gi://GLib";
 
 import { SidePanel } from "./sidepanel.js";
 import { NotificationsPopup } from "./notifications.js";
+import { Bar } from "./bar.js";
 
 Gtk.init(null);
 
@@ -22,10 +23,12 @@ try {
     console.error("Failed to load CSS:", e);
 }
 
+const topBarWindow = Bar();
 const sidePanelWindow = SidePanel();
 const notificationsWindow = NotificationsPopup();
 
-// Keep sidepanel hidden on startup
+// Render top bar, keep sidepanel hidden on startup
+topBarWindow.show_all();
 sidePanelWindow.hide();
 notificationsWindow.hide();
 
