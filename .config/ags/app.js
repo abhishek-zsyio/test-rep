@@ -1,4 +1,4 @@
-import App from 'resource:///com/github/Aylur/ags/app.js';
+import App from 'ags';
 import { SidePanel } from './sidepanel.js';
 import { NotificationsPopup } from './notifications.js';
 

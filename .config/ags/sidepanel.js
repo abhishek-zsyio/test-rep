@@ -1,11 +1,11 @@
-import Widget from 'resource:///com/github/Aylur/ags/widget.js';
-import Audio from 'resource:///com/github/Aylur/ags/service/audio.js';
-import Notifications from 'resource:///com/github/Aylur/ags/service/notifications.js';
-import Mpris from 'resource:///com/github/Aylur/ags/service/mpris.js';
-import Network from 'resource:///com/github/Aylur/ags/service/network.js';
-import Bluetooth from 'resource:///com/github/Aylur/ags/service/bluetooth.js';
-import Utils from 'resource:///com/github/Aylur/ags/utils.js';
-import App from 'resource:///com/github/Aylur/ags/app.js';
+import Widget from 'ags/widget';
+import Audio from 'ags/service/audio';
+import Notifications from 'ags/service/notifications';
+import Mpris from 'ags/service/mpris';
+import Network from 'ags/service/network';
+import Bluetooth from 'ags/service/bluetooth';
+import Utils from 'ags/utils';
+import App from 'ags';
 
 // --- Header Widget ---
 const Header = () => Widget.Box({

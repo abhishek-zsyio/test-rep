@@ -1,5 +1,5 @@
-import Widget from 'resource:///com/github/Aylur/ags/widget.js';
-import Notifications from 'resource:///com/github/Aylur/ags/service/notifications.js';
+import Widget from 'ags/widget';
+import Notifications from 'ags/service/notifications';
 
 const PopupItem = (n) => Widget.EventBox({
     onPrimaryClick: () => n.dismiss(),
