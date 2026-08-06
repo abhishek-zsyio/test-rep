@@ -101,6 +101,8 @@ ALL_PACKAGES=(
     nwg-look
     ttf-jetbrains-mono-nerd
     ttf-font-awesome
+    ttf-nerd-fonts-symbols
+    noto-fonts-emoji
     papirus-icon-theme
     bibata-cursor-theme
 )
@@ -156,6 +158,14 @@ else
 fi
 
 # -----------------------------------------------------------------------------
+# Font Cache Rebuild
+# -----------------------------------------------------------------------------
+if command -v fc-cache >/dev/null 2>&1; then
+    info "Updating system font caches with fc-cache..."
+    fc-cache -fv >/dev/null 2>&1 || true
+fi
+
+# -----------------------------------------------------------------------------
 # Zsh & Oh My Zsh Environment Setup
 # -----------------------------------------------------------------------------
 info "Setting up Zsh environment & Oh My Zsh plugins..."
@@ -189,4 +199,4 @@ if command -v zsh >/dev/null 2>&1; then
     fi
 fi
 
-success "Dependency check and Zsh setup finished successfully!"
+success "Dependency check, font cache rebuild, and Zsh setup finished successfully!"
