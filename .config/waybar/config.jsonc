@@ -1,0 +1,280 @@
+{
+  "layer": "top",
+  "position": "bottom",
+  //  "margin-left": 4,
+  // "margin-right": 4,
+  // "margin-top": 4,
+  "mode": "dock",
+  "reload_style_on_change": true,
+  "gtk-layer-shell": true,
+  "modules-left": [
+    "hyprland/workspaces",
+    "mpris"
+  ],
+  "modules-center": [
+    "idle_inhibitor",
+    "clock"
+  ],
+  "modules-right": [
+    "group/custom-system-stats",
+    "pulseaudio",
+    "backlight",
+    "battery",
+    "group/custom-group"
+  ],
+  "group/custom-group": {
+    "format": "",
+    "tooltip-format": "Hardware group",
+    "orientation": "horizontal",
+    "drawer": {
+      "transition-duration": 500,
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "custom/group-right-logo",
+      "tray",
+      "custom/wifi",
+      "bluetooth",
+      "custom/notification",
+      "custom/theme-toggle",
+      "custom/power"
+    ]
+  },
+  "group/custom-system-stats": {
+    "format": "󰍛",
+    "tooltip-format": "System Resource Usage",
+    "orientation": "horizontal",
+    "drawer": {
+      "transition-duration": 500,
+      "transition-left-to-right": false
+    },
+    "modules": [
+      "custom/cpu",
+      "custom/memory",
+      "temperature"
+    ]
+  },
+  "custom/cpu": {
+    "exec": "echo '󰍛'",
+    "interval": 5,
+    "return-type": "text",
+    "tooltip": true,
+    "tooltip-format": "CPU Usage"
+  },
+  "custom/memory": {
+    "exec": "free -h | awk '/^Mem/ {print \" Mem: \"$3\"/\"$2}'",
+    "interval": 5,
+    "return-type": "text",
+    "tooltip": false
+  },
+  "temperature": {
+    "thermal-zone": 2,
+    "hwmon-path": [
+      "/sys/class/hwmon/hwmon2/temp1_input",
+      "/sys/class/thermal/thermal_zone0/temp"
+    ],
+    "critical-threshold": 80,
+    "format-critical": " Temp: {temperatureC}°C",
+    "format": " Temp: {temperatureC}°C"
+  },
+  "custom/group-right-logo": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "System Logo"
+  },
+  "custom/power": {
+    "format": "⏻",
+    "tooltip": true,
+    "tooltip-format": "Power Options",
+    "menu": "on-click",
+    "menu-file": "~/.config/waybar/menus/power_menu.xml",
+    "menu-actions": {
+      "shutdown": "shutdown",
+      "reboot": "reboot",
+      "suspend": "systemctl suspend",
+      "hibernate": "systemctl hibernate"
+    }
+  },
+  "hyprland/workspaces": {
+    "on-scroll-up": "hyprctl dispatch workspace -1",
+    "on-scroll-down": "hyprctl dispatch workspace +1",
+    "persistent-workspaces": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "4": [],
+      "5": []
+    },
+    "tooltip-format": "Workspaces"
+  },
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated": "󰈈",
+      "deactivated": "󰈉"
+    },
+    "tooltip": true,
+    "tooltip-format-activated": "Presentation Mode",
+    "tooltip-format-deactivated": "Idle Mode",
+    "start-activated": false
+  },
+  "clock": {
+    "format": "{:%I:%M %p}",
+    "format-alt": "{:%A, %B %d, %Y (%r)}",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "calendar": {
+      "mode": "year",
+      "mode-mon-col": 3,
+      "weeks-pos": "right",
+      "on-scroll": 1,
+      "on-click-right": "mode",
+      "format": {
+        "months": "<span color='#ffead3'><b>{}</b></span>",
+        "days": "<span color='#ecc6d9'><b>{}</b></span>",
+        "weeks": "<span color='#99ffdd'><b>W{}</b></span>",
+        "weekdays": "<span color='#ffcc66'><b>{}</b></span>",
+        "today": "<span color='#ff6699'><b><u>{}</u></b></span>"
+      }
+    },
+    "actions": {
+      "on-click-right": "mode",
+      "on-click-forward": "tz_up",
+      "on-click-backward": "tz_down",
+      "on-scroll-up": "shift_up",
+      "on-scroll-down": "shift_down"
+    }
+  },
+  "mpris": {
+    "format": "{player_icon} {title} - {artist}",
+    "format-paused": "{status_icon} {title} - {artist}",
+    "player-icons": {
+      "default": "<span foreground='#89b4fa'>󰝚 </span>",
+      "spotify": "<span foreground='#40a02b'>󰓇 </span>",
+      "firefox": "<span foreground='#d20f39'>󰗃 </span>"
+    },
+    "status-icons": {
+      "paused": "<span foreground='#f9e2af'>󰏤</span>"
+    },
+    "tooltip-format": "Playing: {title} - {artist}",
+    "tooltip-format-paused": "Paused: {title} - {artist}",
+    "min-length": 5,
+    "max-length": 35
+  },
+  "pulseaudio": {
+    "format": "{icon}",
+    "format-muted": "󰝟",
+    "format-icons": {
+      "default": [
+        "󰕿",
+        "󰖀",
+        "󰕾"
+      ],
+      "headphone": "󰋋",
+      "headset": "󰋋"
+    },
+    "tooltip-format": "Audio Device: {desc}",
+    "on-click": "~/.config/hypr/scripts/volumecontrol.sh -o m",
+    "on-scroll-up": "~/.config/hypr/scripts/volumecontrol.sh -o i",
+    "on-scroll-down": "~/.config/hypr/scripts/volumecontrol.sh -o d"
+  },
+  "backlight": {
+    "format": "{icon}",
+    "format-icons": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "tooltip": true,
+    "tooltip-format": "Brightness: {}%",
+    "on-scroll-up": "~/.config/hypr/scripts/brightnesscontrol.sh -o i",
+    "on-scroll-down": "~/.config/hypr/scripts/brightnesscontrol.sh -o d"
+  },
+  "battery": {
+    "states": {
+      "warning": 20,
+      "critical": 10
+    },
+    "format": "{icon}",
+    "format-icons": [
+      "󰂎",
+      "󰁻",
+      "󰁼",
+      "󰁽",
+      "󰁾",
+      "󰁿",
+      "󰂀",
+      "󰂁",
+      "󰂂",
+      "󰁹"
+    ],
+    "format-charging": "",
+    "tooltip-format": "Battery: {capacity}%",
+    //    "tooltip-format-charging": "Charging: {time}",
+    "interval": 1
+  },
+  "tray": {
+    "spacing": 10,
+    "icons": {
+      "blueman": "bluetooth",
+      "TelegramDesktop": "$HOME/.local/share/icons/hicolor/16x16/apps/telegram.png"
+    },
+    "tooltip-format": "System Tray"
+  },
+  "custom/wifi": {
+    "exec": "~/.config/waybar/scripts/wifi-status.sh",
+    "return-type": "json",
+    "format": "{}",
+    "tooltip": true,
+    "tooltip-format": "Wi-Fi Status",
+    "on-click": "~/.config/waybar/scripts/wifi-menu.sh",
+    "on-click-right": "kitty --title '󰤨  Network Manager TUI' bash -c nmtui",
+    "interval": 1
+  },
+  "bluetooth": {
+    "format": "󰂰",
+    "format-disabled": "󰂲",
+    "format-connected": "󰂱",
+    "format-connected-battery": "󰂱",
+    "tooltip-format": "{num_connections} connected",
+    "tooltip-format-disabled": "Bluetooth Disabled",
+    "tooltip-format-connected": "{device_enumerate}",
+    "tooltip-format-enumerate-connected": "{device_alias}",
+    "tooltip-format-enumerate-connected-battery": ":: {device_alias}: 󱊣 {device_battery_percentage}%",
+    "on-click": "~/.config/waybar/scripts/bluetooth-menu.sh",
+    "on-click-right": "kitty --title '󰂯  Bluetooth TUI' bash -c bluetui",
+    "interval": 1
+  },
+  "custom/notification": {
+    "tooltip": true,
+    "tooltip-format": "Notifications",
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "<span foreground='red'><sup></sup></span>",
+      "none": "",
+      "dnd-notification": "<span foreground='red'><sup></sup></span>",
+      "dnd-none": "",
+      "inhibited-notification": "<span foreground='red'><sup></sup></span>",
+      "inhibited-none": "",
+      "dnd-inhibited-notification": "<span foreground='red'><sup></sup></span>",
+      "dnd-inhibited-none": ""
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  },
+  "custom/theme-toggle": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "Toggle Light/Dark Theme",
+    "on-click": "/home/abhishek/.config/scripts/mode_toggle.py && kill -SIGUSR1 $(pgrep kitty)"
+  }
+}

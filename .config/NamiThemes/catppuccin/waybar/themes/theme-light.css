@@ -1,0 +1,208 @@
+/* Font and reset */
+* {
+  font-family: "CaskaydiaMono Nerd Font";
+  font-size: 15px;
+  font-weight: bold;
+  border: none;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+}
+
+/* Background and layout */
+window#waybar,
+window#waybar>box {
+  background: #eff1f5;
+  /* Base */
+  padding: 5px 6px;
+}
+
+/* Tooltip */
+tooltip {
+  background: rgba(186, 194, 222, 0.9);
+  /* Overlay1 with alpha */
+}
+
+tooltip label {
+  color: #4c4f69;
+  /* Text */
+  margin: 0 2px;
+}
+
+/* Menus */
+menu {
+  border-radius: 0px;
+  background: #dce0e8;
+  /* Surface0 */
+  padding: 0px 4px;
+  box-shadow: none;
+}
+
+menuitem {
+  padding: 8px 8px;
+  margin: 2px 5px;
+  border-radius: 4px;
+}
+
+menuitem:hover {
+  background-color: #dc8a78;
+  /* Red */
+  color: #eff1f5;
+  /* Base */
+}
+
+/* Modules */
+#workspaces,
+#custom-theme-toggle,
+#pulseaudio,
+#backlight,
+#battery,
+#custom-wifi,
+#bluetooth,
+#custom-power,
+#idle_inhibitor,
+#clock,
+#mpris,
+#tray,
+#custom-notification,
+#custom-group-right-logo,
+#custom-cpu,
+#custom-memory,
+#temperature {
+  color: #4c4f69;
+  /* Text */
+  background: transparent;
+  padding: 2px 9px;
+  margin: 0 2px;
+}
+
+/* Workspaces */
+#workspaces {
+  color: #dc8a78;
+  /* Red */
+}
+
+#workspaces button {
+  color: #7287fd;
+  /* Lavender */
+  padding: 2px 4px;
+  margin: 0 3px;
+  border-radius: 2px;
+}
+
+#workspaces button.active {
+  background: #40a02b;
+  /* Green */
+  color: #ffffff;
+  font-weight: bolder;
+  text-decoration: underline;
+}
+
+#workspaces button.active:hover {
+  background: #df8e1d;
+  /* Yellow */
+  color: #ffffff;
+}
+
+#workspaces button:hover {
+  color: #d20f39;
+  /* Red */
+}
+
+/* Hover effects */
+#custom-power:hover,
+#pulseaudio:hover,
+#bluetooth:hover,
+#custom-wifi:hover,
+#clock:hover,
+#mpris:hover,
+#custom-cpu:hover,
+#custom-memory:hover,
+#temperature:hover {
+  color: #df8e1d;
+  /* Yellow */
+}
+
+/* Individual Modules */
+#custom-power {
+  color: #dc8a78;
+  /* Red */
+}
+
+#pulseaudio {
+  color: #40a02b;
+  /* Green */
+}
+
+#battery {
+  color: #1e66f5;
+  /* Blue */
+}
+
+#battery.warning {
+  color: #df8e1d;
+  /* Yellow */
+}
+
+#battery.critical {
+  color: #d20f39;
+  /* Red */
+}
+
+#battery.charging {
+  color: #40a02b;
+  /* Green */
+}
+
+#custom-wifi {
+  color: #04a5e5;
+  /* Sky */
+}
+
+#bluetooth {
+  color: #8839ef;
+  /* Mauve */
+}
+
+#mpris {
+  color: #40a02b;
+  /* Green */
+}
+
+#idle_inhibitor {
+  color: #7287fd;
+  /* Lavender */
+}
+
+#clock {
+  color: #fe640b;
+  /* Peach */
+}
+
+#custom-theme-toggle {
+  color: #fe640b;
+  /* Peach */
+  background: transparent;
+}
+
+#custom-group-right-logo {
+  color: #40a02b;
+  /* Green */
+  padding-right: 20px;
+}
+
+/* System stats modules */
+#custom-cpu {
+  color: #8839ef;
+  /* Mauve */
+}
+
+#custom-memory {
+  color: #40a02b;
+  /* Green */
+}
+
+#temperature {
+  color: #d20f39;
+  /* Red */
+}
