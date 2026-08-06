@@ -56,11 +56,11 @@ hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("hyprctl dispatch resizewindow"))
 ---- WORKSPACES & SWITCHING -----
 ---------------------------------
 for i = 1, 9 do
-    hl.bind(mainMod .. " + " .. i, hl.dsp.focus({ workspace = tostring(i) }))
+    hl.bind(mainMod .. " + " .. i, hl.dsp.exec_cmd("hyprctl dispatch workspace " .. i))
     hl.bind(mainMod .. " + SHIFT + " .. i, hl.dsp.exec_cmd("hyprctl dispatch movetoworkspace " .. i))
     hl.bind(mainMod .. " + ALT + " .. i, hl.dsp.exec_cmd("hyprctl dispatch movetoworkspacesilent " .. i))
 end
-hl.bind(mainMod .. " + 0", hl.dsp.focus({ workspace = "10" }))
+hl.bind(mainMod .. " + 0", hl.dsp.exec_cmd("hyprctl dispatch workspace 10"))
 hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.exec_cmd("hyprctl dispatch movetoworkspace 10"))
 hl.bind(mainMod .. " + ALT + 0", hl.dsp.exec_cmd("hyprctl dispatch movetoworkspacesilent 10"))
 
