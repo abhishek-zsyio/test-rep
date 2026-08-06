@@ -2,6 +2,7 @@ import Gtk from "gi://Gtk?version=3.0";
 import Gdk from "gi://Gdk?version=3.0";
 import GLib from "gi://GLib";
 import Gio from "gi://Gio";
+import GtkLayerShell from "gi://GtkLayerShell?version=0.1";
 
 function el(WidgetClass, props = {}, cssClass = "") {
     const w = new WidgetClass(props);
@@ -329,6 +330,13 @@ export function SidePanel() {
         default_width: 370,
         default_height: 740,
     }, "sidepanel-window");
+
+    // Wayland LayerShell Anchor
+    GtkLayerShell.init_for_window(win);
+    GtkLayerShell.set_layer(win, GtkLayerShell.Layer.TOP);
+    GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.TOP, true);
+    GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.RIGHT, true);
+    GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.BOTTOM, true);
 
     const screen = win.get_screen();
     const visual = screen ? screen.get_rgba_visual() : null;

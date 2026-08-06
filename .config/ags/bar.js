@@ -3,6 +3,7 @@ import Gdk from "gi://Gdk?version=3.0";
 import GLib from "gi://GLib";
 import Gio from "gi://Gio";
 import Pango from "gi://Pango";
+import GtkLayerShell from "gi://GtkLayerShell?version=0.1";
 
 function el(WidgetClass, props = {}, cssClass = "") {
     const w = new WidgetClass(props);
@@ -148,6 +149,14 @@ export function Bar() {
         decorated: false,
         resizable: false,
     }, "bar-window");
+
+    // Wayland LayerShell Docking
+    GtkLayerShell.init_for_window(win);
+    GtkLayerShell.set_layer(win, GtkLayerShell.Layer.TOP);
+    GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.TOP, true);
+    GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.LEFT, true);
+    GtkLayerShell.set_anchor(win, GtkLayerShell.Edge.RIGHT, true);
+    GtkLayerShell.auto_exclusive_zone_enable(win);
 
     const screen = win.get_screen();
     const visual = screen ? screen.get_rgba_visual() : null;
