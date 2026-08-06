@@ -2,7 +2,9 @@
 -- See https://wiki.hypr.land/Configuring/Autostart/
 
 hl.on("hyprland.start", function()
+    hl.exec_cmd("swww-daemon")
     hl.exec_cmd("hyprpaper")
+    hl.exec_cmd("python3 ~/.config/scripts/change_wallpaper.py -0")
     hl.exec_cmd("waybar")
     hl.exec_cmd("swayosd-server")
     hl.exec_cmd("mako")
