@@ -4,7 +4,7 @@ import Notifications from 'resource:///com/github/Aylur/ags/service/notification
 const PopupItem = (n) => Widget.EventBox({
     onPrimaryClick: () => n.dismiss(),
     child: Widget.Box({
-        className: `notification-toast ${n.urgency}`,
+        className: `notification-toast ${n.urgency || 'normal'}`,
         vertical: true,
         children: [
             Widget.Box({
@@ -27,15 +27,16 @@ const PopupItem = (n) => Widget.EventBox({
                 className: 'toast-summary',
                 xalign: 0,
                 truncate: 'end',
-                label: n.summary,
+                label: n.summary || '',
             }),
-            n.body ? Widget.Label({
+            Widget.Label({
                 className: 'toast-body',
                 xalign: 0,
                 wrap: true,
-                label: n.body,
-            }) : null,
-        ].filter(Boolean),
+                label: n.body || '',
+                visible: Boolean(n.body),
+            }),
+        ],
     }),
 });
 

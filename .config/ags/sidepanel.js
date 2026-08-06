@@ -23,10 +23,9 @@ const Header = () => Widget.Box({
                 Widget.Label({
                     className: 'header-clock',
                     xalign: 0,
-                    setup: self => self
-                        .poll(1000, self => {
-                            self.label = Utils.exec('date "+%A, %B %d • %H:%M"');
-                        }),
+                    setup: self => self.poll(1000, self => {
+                        self.label = Utils.exec('date "+%A, %B %d • %H:%M"');
+                    }),
                 }),
             ],
         }),
@@ -38,7 +37,7 @@ const Header = () => Widget.Box({
                     className: 'icon-btn lock-btn',
                     onClicked: () => {
                         App.closeWindow('sidepanel');
-                        Utils.execAsync('hyprlock');
+                        Utils.execAsync('hyprlock').catch(() => {});
                     },
                     child: Widget.Label({ label: '🔒' }),
                     tooltipText: 'Lock Screen',
@@ -47,7 +46,7 @@ const Header = () => Widget.Box({
                     className: 'icon-btn power-btn',
                     onClicked: () => {
                         App.closeWindow('sidepanel');
-                        Utils.execAsync('pkill -x rofi || ~/.config/rofi/powermenu/powermenu.sh');
+                        Utils.execAsync('pkill -x rofi || ~/.config/rofi/powermenu/powermenu.sh').catch(() => {});
                     },
                     child: Widget.Label({ label: '⏻' }),
                     tooltipText: 'Power Menu',
@@ -57,106 +56,121 @@ const Header = () => Widget.Box({
     ],
 });
 
-// --- Quick Toggles ---
-const QuickToggles = () => Widget.Grid({
-    className: 'quick-toggles-grid',
-    columnSpacing: 10,
-    rowSpacing: 10,
-    homogeneous: true,
+// --- Quick Toggles (2x2 Box Layout) ---
+const QuickToggles = () => Widget.Box({
+    className: 'quick-toggles-container',
+    vertical: true,
+    spacing: 8,
     children: [
-        // WiFi Toggle
-        Widget.Button({
-            className: 'toggle-btn',
-            onClicked: () => {
-                const state = Network.wifi.enabled;
-                Network.wifi.enabled = !state;
-            },
-            setup: self => self.hook(Network, () => {
-                const active = Network.wifi?.enabled;
-                self.toggleClassName('active', Boolean(active));
-            }),
-            child: Widget.Box({
-                spacing: 8,
-                children: [
-                    Widget.Label({ label: '󰤨' }),
-                    Widget.Label({
-                        label: 'Wi-Fi',
-                        setup: self => self.hook(Network, () => {
-                            self.label = Network.wifi?.ssid || (Network.wifi?.enabled ? 'Disconnected' : 'Off');
-                        }),
+        // Row 1: WiFi & Bluetooth
+        Widget.Box({
+            homogeneous: true,
+            spacing: 8,
+            children: [
+                // WiFi Toggle
+                Widget.Button({
+                    className: 'toggle-btn',
+                    onClicked: () => {
+                        if (Network.wifi) {
+                            Network.wifi.enabled = !Network.wifi.enabled;
+                        }
+                    },
+                    setup: self => self.hook(Network, () => {
+                        const active = Network.wifi?.enabled;
+                        self.toggleClassName('active', Boolean(active));
                     }),
-                ],
-            }),
+                    child: Widget.Box({
+                        spacing: 8,
+                        children: [
+                            Widget.Label({ label: '󰤨' }),
+                            Widget.Label({
+                                label: 'Wi-Fi',
+                                setup: self => self.hook(Network, () => {
+                                    self.label = Network.wifi?.ssid || (Network.wifi?.enabled ? 'Disconnected' : 'Off');
+                                }),
+                            }),
+                        ],
+                    }),
+                }),
+                // Bluetooth Toggle
+                Widget.Button({
+                    className: 'toggle-btn',
+                    onClicked: () => {
+                        if (Bluetooth) {
+                            Bluetooth.enabled = !Bluetooth.enabled;
+                        }
+                    },
+                    setup: self => self.hook(Bluetooth, () => {
+                        self.toggleClassName('active', Boolean(Bluetooth.enabled));
+                    }),
+                    child: Widget.Box({
+                        spacing: 8,
+                        children: [
+                            Widget.Label({ label: '󰂯' }),
+                            Widget.Label({
+                                label: 'Bluetooth',
+                                setup: self => self.hook(Bluetooth, () => {
+                                    self.label = Bluetooth.enabled ? (Bluetooth.connected_devices?.length ? `${Bluetooth.connected_devices.length} Connected` : 'On') : 'Off';
+                                }),
+                            }),
+                        ],
+                    }),
+                }),
+            ],
         }),
-        // Bluetooth Toggle
-        Widget.Button({
-            className: 'toggle-btn',
-            onClicked: () => {
-                const state = Bluetooth.enabled;
-                Bluetooth.enabled = !state;
-            },
-            setup: self => self.hook(Bluetooth, () => {
-                self.toggleClassName('active', Bluetooth.enabled);
-            }),
-            child: Widget.Box({
-                spacing: 8,
-                children: [
-                    Widget.Label({ label: '󰂯' }),
-                    Widget.Label({
-                        label: 'Bluetooth',
-                        setup: self => self.hook(Bluetooth, () => {
-                            self.label = Bluetooth.enabled ? (Bluetooth.connected_devices.length ? `${Bluetooth.connected_devices.length} Connected` : 'On') : 'Off';
-                        }),
+        // Row 2: Mic & DND
+        Widget.Box({
+            homogeneous: true,
+            spacing: 8,
+            children: [
+                // Mic Mute Toggle
+                Widget.Button({
+                    className: 'toggle-btn',
+                    onClicked: () => {
+                        if (Audio.microphone) {
+                            Audio.microphone.is_muted = !Audio.microphone.is_muted;
+                        }
+                    },
+                    setup: self => self.hook(Audio, () => {
+                        const muted = Audio.microphone?.is_muted;
+                        self.toggleClassName('active', !muted);
                     }),
-                ],
-            }),
-        }),
-        // Mic Mute Toggle
-        Widget.Button({
-            className: 'toggle-btn',
-            onClicked: () => {
-                if (Audio.microphone) {
-                    Audio.microphone.is_muted = !Audio.microphone.is_muted;
-                }
-            },
-            setup: self => self.hook(Audio, () => {
-                const muted = Audio.microphone?.is_muted;
-                self.toggleClassName('active', !muted);
-            }),
-            child: Widget.Box({
-                spacing: 8,
-                children: [
-                    Widget.Label({ label: '󰍬' }),
-                    Widget.Label({
-                        label: 'Mic',
-                        setup: self => self.hook(Audio, () => {
-                            self.label = Audio.microphone?.is_muted ? 'Muted' : 'Active';
-                        }),
+                    child: Widget.Box({
+                        spacing: 8,
+                        children: [
+                            Widget.Label({ label: '󰍬' }),
+                            Widget.Label({
+                                label: 'Mic',
+                                setup: self => self.hook(Audio, () => {
+                                    self.label = Audio.microphone?.is_muted ? 'Muted' : 'Active';
+                                }),
+                            }),
+                        ],
                     }),
-                ],
-            }),
-        }),
-        // Do Not Disturb Toggle
-        Widget.Button({
-            className: 'toggle-btn',
-            onClicked: () => {
-                Notifications.dnd = !Notifications.dnd;
-            },
-            setup: self => self.hook(Notifications, () => {
-                self.toggleClassName('active', Notifications.dnd);
-            }),
-            child: Widget.Box({
-                spacing: 8,
-                children: [
-                    Widget.Label({ label: '󰂛' }),
-                    Widget.Label({
-                        label: 'DND',
-                        setup: self => self.hook(Notifications, () => {
-                            self.label = Notifications.dnd ? 'On' : 'Off';
-                        }),
+                }),
+                // Do Not Disturb Toggle
+                Widget.Button({
+                    className: 'toggle-btn',
+                    onClicked: () => {
+                        Notifications.dnd = !Notifications.dnd;
+                    },
+                    setup: self => self.hook(Notifications, () => {
+                        self.toggleClassName('active', Notifications.dnd);
                     }),
-                ],
-            }),
+                    child: Widget.Box({
+                        spacing: 8,
+                        children: [
+                            Widget.Label({ label: '󰂛' }),
+                            Widget.Label({
+                                label: 'DND',
+                                setup: self => self.hook(Notifications, () => {
+                                    self.label = Notifications.dnd ? 'On' : 'Off';
+                                }),
+                            }),
+                        ],
+                    }),
+                }),
+            ],
         }),
     ],
 });
@@ -175,11 +189,7 @@ const VolumeSlider = () => Widget.Box({
             child: Widget.Label({
                 label: '󰕾',
                 setup: self => self.hook(Audio, () => {
-                    if (Audio.speaker?.is_muted) {
-                        self.label = '󰖁';
-                    } else {
-                        self.label = '󰕾';
-                    }
+                    self.label = Audio.speaker?.is_muted ? '󰖁' : '󰕾';
                 }),
             }),
         }),
@@ -221,7 +231,9 @@ const BrightnessSlider = () => Widget.Box({
                     .then(current => {
                         Utils.execAsync('brightnessctl m')
                             .then(max => {
-                                self.value = Number(current) / Number(max);
+                                if (Number(max) > 0) {
+                                    self.value = Number(current) / Number(max);
+                                }
                             }).catch(() => {});
                     }).catch(() => {});
             }),
@@ -235,7 +247,7 @@ const MediaPlayer = () => Widget.Box({
     vertical: true,
     setup: self => self.hook(Mpris, () => {
         const players = Mpris.players;
-        self.visible = players.length > 0;
+        self.visible = Boolean(players && players.length > 0);
     }),
     children: [
         Widget.Box({
@@ -247,11 +259,7 @@ const MediaPlayer = () => Widget.Box({
                     size: 48,
                     setup: self => self.hook(Mpris, () => {
                         const player = Mpris.players[0];
-                        if (player && player.cover_path) {
-                            self.icon = player.cover_path;
-                        } else {
-                            self.icon = 'audio-x-generic';
-                        }
+                        self.icon = player?.cover_path || 'audio-x-generic';
                     }),
                 }),
                 Widget.Box({
@@ -273,7 +281,7 @@ const MediaPlayer = () => Widget.Box({
                             truncate: 'end',
                             setup: self => self.hook(Mpris, () => {
                                 const player = Mpris.players[0];
-                                self.label = player ? (player.track_artists.join(', ') || 'Unknown Artist') : '';
+                                self.label = player ? (player.track_artists?.join(', ') || 'Unknown Artist') : '';
                             }),
                         }),
                     ],
@@ -309,7 +317,7 @@ const MediaPlayer = () => Widget.Box({
 
 // --- Notifications List ---
 const NotificationItem = (n) => Widget.Box({
-    className: `notification-item ${n.urgency}`,
+    className: `notification-item ${n.urgency || 'normal'}`,
     vertical: true,
     children: [
         Widget.Box({
@@ -332,15 +340,16 @@ const NotificationItem = (n) => Widget.Box({
             className: 'notification-summary',
             xalign: 0,
             truncate: 'end',
-            label: n.summary,
+            label: n.summary || '',
         }),
-        n.body ? Widget.Label({
+        Widget.Label({
             className: 'notification-body',
             xalign: 0,
             wrap: true,
-            label: n.body,
-        }) : null,
-    ].filter(Boolean),
+            label: n.body || '',
+            visible: Boolean(n.body),
+        }),
+    ],
 });
 
 const NotificationsCenter = () => Widget.Box({
