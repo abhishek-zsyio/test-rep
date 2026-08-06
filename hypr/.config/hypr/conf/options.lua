@@ -8,7 +8,7 @@ hl.config({
         border_size = 2,
 
         col = {
-            active_border   = "rgba(c4a7e7ff) rgba(ebbcba44) 45deg",
+            active_border   = { colors = { "rgba(c4a7e7ff)", "rgba(ebbcba44)" }, angle = 45 },
             inactive_border = "rgba(26233aaa)",
         },
 
@@ -69,7 +69,7 @@ hl.config({
 
         touchpad = {
             natural_scroll = true,
-            tap-to-click   = true,
+            tap_to_click   = true,
         },
     },
 })
