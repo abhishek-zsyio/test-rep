@@ -5,9 +5,9 @@ hl.config({
     general = {
         gaps_in = 5,
         gaps_out = 5,
-        border_size = 3,
+        border_size = 2,
         col = {
-            active_border = { colors = { "rgba(8839efee)", "rgba(e64553ee)" }, angle = 45 },
+            active_border = { colors = { "rgba(cba6f7ee)", "rgba(89b4faee)" }, angle = 45 },
             inactive_border = "rgba(5c5f77aa)",
         },
         resize_on_border = false,
@@ -16,8 +16,8 @@ hl.config({
     },
 
     decoration = {
-        rounding = 0,
-        rounding_power = 0,
+        rounding = 8,
+        rounding_power = 2,
         active_opacity = 1.0,
         inactive_opacity = 1.0,
 
@@ -48,6 +48,8 @@ hl.config({
 
     misc = {
         disable_hyprland_logo = true,
+        disable_splash_rendering = true,
+        background_color = "0x11111b",
     },
 
     input = {
@@ -66,16 +68,16 @@ hl.config({
 
     group = {
         col = {
-            border_inactive = "rgba(6a9589b0)",
-            border_active = { colors = { "rgba(dcd7baee)", "rgba(957fb8b0)", "rgba(957fb8b0)", "rgba(dcd7baee)" }, angle = 45 },
+            border_inactive = "rgba(5c5f77aa)",
+            border_active = { colors = { "rgba(cba6f7ee)", "rgba(89b4faee)" }, angle = 45 },
         },
         groupbar = {
             col = {
-                active = "rgba(957fb8cc)",
-                inactive = "rgba(717c7c99)",
+                active = "rgba(cba6f7cc)",
+                inactive = "rgba(5c5f7799)",
             },
             font_size = 10,
-            text_color = "rgba(1f1f28ff)",
+            text_color = "rgba(cdd6f4ff)",
         },
     },
 })
@@ -96,4 +98,3 @@ if hl.plugin then
         hl.plugin.hyprexpo.gesture_positive = true
     end
 end
-
