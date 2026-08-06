@@ -1,50 +1,48 @@
 -- Keybindings Configuration (macOS Style: SUPER = Cmd)
 
-local mainMod = "SUPER"
-
 -- Core Applications
-hl.bind({ mod = mainMod, key = "RETURN", dispatcher = "exec", arg = "kitty" })
-hl.bind({ mod = mainMod, key = "E", dispatcher = "exec", arg = "nautilus" })
-hl.bind({ mod = mainMod, key = "SPACE", dispatcher = "exec", arg = "walker" })
+hl.bind("SUPER + RETURN", hl.dsp.exec_cmd("kitty"))
+hl.bind("SUPER + E", hl.dsp.exec_cmd("nautilus"))
+hl.bind("SUPER + SPACE", hl.dsp.exec_cmd("walker"))
 
 -- Window Management
-hl.bind({ mod = mainMod, key = "Q", dispatcher = "killactive" })
-hl.bind({ mod = mainMod, key = "V", dispatcher = "togglefloating" })
-hl.bind({ mod = mainMod, key = "F", dispatcher = "fullscreen", arg = "0" })
-hl.bind({ mod = mainMod, key = "P", dispatcher = "pseudo" })
-hl.bind({ mod = mainMod, key = "J", dispatcher = "togglesplit" })
+hl.bind("SUPER + Q", hl.dsp.window.close())
+hl.bind("SUPER + V", hl.dsp.window.float({ action = "toggle" }))
+hl.bind("SUPER + F", hl.dsp.window.fullscreen())
+hl.bind("SUPER + P", hl.dsp.window.pseudo({ action = "toggle" }))
+hl.bind("SUPER + J", hl.dsp.layout("togglesplit"))
 
 -- Focus Movement
-hl.bind({ mod = mainMod, key = "left", dispatcher = "movefocus", arg = "l" })
-hl.bind({ mod = mainMod, key = "right", dispatcher = "movefocus", arg = "r" })
-hl.bind({ mod = mainMod, key = "up", dispatcher = "movefocus", arg = "u" })
-hl.bind({ mod = mainMod, key = "down", dispatcher = "movefocus", arg = "d" })
+hl.bind("SUPER + left", hl.dsp.focus({ direction = "l" }))
+hl.bind("SUPER + right", hl.dsp.focus({ direction = "r" }))
+hl.bind("SUPER + up", hl.dsp.focus({ direction = "u" }))
+hl.bind("SUPER + down", hl.dsp.focus({ direction = "d" }))
 
 -- Window Movement
-hl.bind({ mod = mainMod .. " SHIFT", key = "left", dispatcher = "movewindow", arg = "l" })
-hl.bind({ mod = mainMod .. " SHIFT", key = "right", dispatcher = "movewindow", arg = "r" })
-hl.bind({ mod = mainMod .. " SHIFT", key = "up", dispatcher = "movewindow", arg = "u" })
-hl.bind({ mod = mainMod .. " SHIFT", key = "down", dispatcher = "movewindow", arg = "d" })
+hl.bind("SUPER + SHIFT + left", hl.dsp.window.move({ direction = "l" }))
+hl.bind("SUPER + SHIFT + right", hl.dsp.window.move({ direction = "r" }))
+hl.bind("SUPER + SHIFT + up", hl.dsp.window.move({ direction = "u" }))
+hl.bind("SUPER + SHIFT + down", hl.dsp.window.move({ direction = "d" }))
 
 -- AGS Shell Toggles
-hl.bind({ mod = mainMod, key = "C", dispatcher = "exec", arg = "ags request control-center toggle" })
-hl.bind({ mod = mainMod, key = "UP", dispatcher = "exec", arg = "ags request overview toggle" })
-hl.bind({ mod = mainMod .. " SHIFT", key = "T", dispatcher = "exec", arg = "ags request theme-picker toggle" })
-hl.bind({ mod = mainMod .. " SHIFT", key = "S", dispatcher = "exec", arg = "ags request screenshot toggle" })
+hl.bind("SUPER + C", hl.dsp.exec_cmd("ags request control-center toggle"))
+hl.bind("SUPER + UP", hl.dsp.exec_cmd("ags request overview toggle"))
+hl.bind("SUPER + SHIFT + T", hl.dsp.exec_cmd("ags request theme-picker toggle"))
+hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd("ags request screenshot toggle"))
 
 -- Hardware Media & Brightness Controls
-hl.bind({ mod = "", key = "XF86AudioRaiseVolume", dispatcher = "exec", arg = "volume --inc" })
-hl.bind({ mod = "", key = "XF86AudioLowerVolume", dispatcher = "exec", arg = "volume --dec" })
-hl.bind({ mod = "", key = "XF86AudioMute", dispatcher = "exec", arg = "volume --toggle" })
-hl.bind({ mod = "", key = "XF86MonBrightnessUp", dispatcher = "exec", arg = "brightness --inc" })
-hl.bind({ mod = "", key = "XF86MonBrightnessDown", dispatcher = "exec", arg = "brightness --dec" })
+hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("volume --inc"))
+hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("volume --dec"))
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd("volume --toggle"))
+hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightness --inc"))
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("brightness --dec"))
 
 -- Workspaces Switch & Move (1-9)
 for i = 1, 9 do
-    hl.bind({ mod = mainMod, key = tostring(i), dispatcher = "workspace", arg = tostring(i) })
-    hl.bind({ mod = mainMod .. " SHIFT", key = tostring(i), dispatcher = "movetoworkspace", arg = tostring(i) })
+    hl.bind("SUPER + " .. i, hl.dsp.focus({ workspace = i }))
+    hl.bind("SUPER + SHIFT + " .. i, hl.dsp.window.move({ workspace = i }))
 end
 
 -- Mouse Binds (Move/Resize)
-hl.bindm({ mod = mainMod, key = "mouse:272", dispatcher = "movewindow" })
-hl.bindm({ mod = mainMod, key = "mouse:273", dispatcher = "resizewindow" })
+hl.bind("SUPER + mouse:272", hl.dsp.window.drag(), { mouse = true })
+hl.bind("SUPER + mouse:273", hl.dsp.window.resize(), { mouse = true })
