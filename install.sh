@@ -19,6 +19,13 @@ PACKAGES=(
 
 BACKUP_DIR="$HOME/.config/dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 
+# Ensure default active symlinks exist inside repository package folders
+echo "Setting default repo theme (rose-pine)..."
+ln -sfn rose-pine "$DOTFILES_DIR/themes/.config/themes/active"
+
+echo "Setting default repo hardware profile (vm.lua)..."
+ln -sfn vm.lua "$DOTFILES_DIR/hardware/.config/hypr/hardware/active.lua"
+
 # Ensure target directories exist as real directories so Stow does not fold them
 TARGET_DIRS=(
     "$HOME/.config"
@@ -42,6 +49,9 @@ for dir in "${TARGET_DIRS[@]}"; do
     fi
     mkdir -p "$dir"
 done
+
+# Clean up any manual non-stow active symlinks in $HOME so Stow can stow them cleanly
+rm -f "$HOME/.config/hypr/hardware/active.lua" "$HOME/.config/themes/active"
 
 echo "Checking for conflicting pre-existing files in $HOME..."
 for pkg in "${PACKAGES[@]}"; do
@@ -67,19 +77,10 @@ for pkg in "${PACKAGES[@]}"; do
     fi
 done
 
-echo "Setting default active theme (rose-pine)..."
-ln -sfn rose-pine "$DOTFILES_DIR/themes/.config/themes/active"
-mkdir -p "$HOME/.config/themes"
-ln -sfn rose-pine "$HOME/.config/themes/active"
-
-echo "Setting default hardware profile (vm.lua)..."
-ln -sfn vm.lua "$DOTFILES_DIR/hardware/.config/hypr/hardware/active.lua"
-mkdir -p "$HOME/.config/hypr/hardware"
-ln -sfn vm.lua "$HOME/.config/hypr/hardware/active.lua"
-
 echo "Ensuring executable permissions on scripts..."
 chmod +x "$DOTFILES_DIR/scripts/.local/bin/"* 2>/dev/null || true
 
 echo "=== Installation & Stow Complete ==="
+
 
 
