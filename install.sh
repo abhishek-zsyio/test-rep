@@ -17,12 +17,31 @@ PACKAGES=(
     "scripts"
 )
 
+BACKUP_DIR="$HOME/.config/dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
+
 mkdir -p "$HOME/.config" "$HOME/.local/bin"
+
+echo "Checking for conflicting pre-existing files in $HOME..."
+for pkg in "${PACKAGES[@]}"; do
+    if [ -d "$pkg" ]; then
+        find "$pkg" -mindepth 1 | while read -r src; do
+            rel_path="${src#$pkg/}"
+            target="$HOME/$rel_path"
+            
+            # If target exists and is NOT a symlink (i.e. regular file), back it up
+            if [ -f "$target" ] && [ ! -L "$target" ]; then
+                echo "Backing up pre-existing conflicting file: $target"
+                mkdir -p "$(dirname "$BACKUP_DIR/$rel_path")"
+                mv "$target" "$BACKUP_DIR/$rel_path"
+            fi
+        done
+    fi
+done
 
 echo "Stowing packages into $HOME..."
 for pkg in "${PACKAGES[@]}"; do
     if [ -d "$pkg" ]; then
-        stow -R -v -t "$HOME" "$pkg" 2>/dev/null || stow -v -t "$HOME" "$pkg"
+        stow -R -v -t "$HOME" "$pkg"
     fi
 done
 
@@ -36,3 +55,4 @@ echo "Ensuring executable permissions on scripts..."
 chmod +x "$DOTFILES_DIR/scripts/.local/bin/"* 2>/dev/null || true
 
 echo "=== Installation & Stow Complete ==="
+
