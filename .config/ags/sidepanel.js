@@ -28,12 +28,17 @@ function execAsync(cmd) {
     } catch (e) {}
 }
 
-// --- Header Widget ---
+// --- Header Card ---
 function Header(win) {
     const userLabel = el(Gtk.Label, {
         xalign: 0,
-        label: (exec("whoami") || "USER").toUpperCase(),
+        label: `Hello, ${(exec("whoami") || "USER").toUpperCase()}`,
     }, "header-user");
+
+    const uptimeLabel = el(Gtk.Label, {
+        xalign: 0,
+        label: `Up ${exec("uptime -p").replace("up ", "")}`,
+    }, "header-uptime");
 
     const clockLabel = el(Gtk.Label, {
         xalign: 0,
@@ -42,6 +47,7 @@ function Header(win) {
 
     GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
         clockLabel.set_text(exec('date "+%A, %B %d • %H:%M"'));
+        uptimeLabel.set_text(`Up ${exec("uptime -p").replace("up ", "")}`);
         return GLib.SOURCE_CONTINUE;
     });
 
@@ -50,7 +56,17 @@ function Header(win) {
         hexpand: true,
     });
     infoBox.pack_start(userLabel, false, false, 0);
+    infoBox.pack_start(uptimeLabel, false, false, 0);
     infoBox.pack_start(clockLabel, false, false, 0);
+
+    const shotBtn = el(Gtk.Button, {
+        label: "📸",
+        tooltip_text: "Take Screenshot",
+    }, "icon-btn");
+    shotBtn.connect("clicked", () => {
+        win.hide();
+        execAsync("sh -c '/home/abhishek/.config/hypr/scripts/screenshot.sh s'");
+    });
 
     const lockBtn = el(Gtk.Button, {
         label: "🔒",
@@ -72,8 +88,9 @@ function Header(win) {
 
     const actionsBox = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
-        spacing: 8,
+        spacing: 6,
     });
+    actionsBox.pack_start(shotBtn, false, false, 0);
     actionsBox.pack_start(lockBtn, false, false, 0);
     actionsBox.pack_start(powerBtn, false, false, 0);
 
@@ -82,6 +99,49 @@ function Header(win) {
     }, "sidepanel-header");
     box.pack_start(infoBox, true, true, 0);
     box.pack_start(actionsBox, false, false, 0);
+
+    return box;
+}
+
+// --- System Telemetry Card (CPU & RAM) ---
+function SystemTelemetry() {
+    const cpuTitle = el(Gtk.Label, { label: "CPU Usage", xalign: 0 }, "telemetry-title");
+    const cpuBar = el(Gtk.ProgressBar, { fraction: 0.15 }, "telemetry-bar");
+
+    const ramTitle = el(Gtk.Label, { label: "Memory (RAM)", xalign: 0 }, "telemetry-title");
+    const ramBar = el(Gtk.ProgressBar, { fraction: 0.35 }, "telemetry-bar ram-bar");
+
+    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2500, () => {
+        try {
+            const cpuLine = exec("sh -c \"top -bn1 | grep 'Cpu(s)' | awk '{print $2}'\"");
+            if (cpuLine) {
+                const cpuPct = parseFloat(cpuLine) / 100;
+                cpuBar.set_fraction(Math.min(Math.max(cpuPct, 0), 1));
+            }
+
+            const ramStr = exec("sh -c \"free | grep Mem | awk '{print $3/$2}'\"");
+            if (ramStr) {
+                const ramPct = parseFloat(ramStr);
+                ramBar.set_fraction(Math.min(Math.max(ramPct, 0), 1));
+            }
+        } catch (e) {}
+        return GLib.SOURCE_CONTINUE;
+    });
+
+    const cpuBox = el(Gtk.Box, { orientation: Gtk.Orientation.VERTICAL });
+    cpuBox.pack_start(cpuTitle, false, false, 0);
+    cpuBox.pack_start(cpuBar, false, false, 0);
+
+    const ramBox = el(Gtk.Box, { orientation: Gtk.Orientation.VERTICAL });
+    ramBox.pack_start(ramTitle, false, false, 0);
+    ramBox.pack_start(ramBar, false, false, 0);
+
+    const box = el(Gtk.Box, {
+        orientation: Gtk.Orientation.VERTICAL,
+        spacing: 8,
+    }, "telemetry-card");
+    box.pack_start(cpuBox, false, false, 0);
+    box.pack_start(ramBox, false, false, 0);
 
     return box;
 }
@@ -170,7 +230,7 @@ function VolumeSlider() {
 
     const box = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
-    }, "slider-box");
+    }, "slider-card");
     box.pack_start(iconBtn, false, false, 0);
     box.pack_start(scale, true, true, 0);
 
@@ -207,7 +267,7 @@ function BrightnessSlider() {
 
     const box = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
-    }, "slider-box");
+    }, "slider-card");
     box.pack_start(iconLabel, false, false, 0);
     box.pack_start(scale, true, true, 0);
 
@@ -266,16 +326,17 @@ export function SidePanel() {
         type: Gtk.WindowType.TOPLEVEL,
         decorated: false,
         resizable: false,
-        default_width: 360,
-        default_height: 700,
+        default_width: 370,
+        default_height: 740,
     });
 
     const content = el(Gtk.Box, {
         orientation: Gtk.Orientation.VERTICAL,
-        spacing: 14,
+        spacing: 12,
     }, "sidepanel-container");
 
     content.pack_start(Header(win), false, false, 0);
+    content.pack_start(SystemTelemetry(), false, false, 0);
     content.pack_start(QuickToggles(), false, false, 0);
     content.pack_start(VolumeSlider(), false, false, 0);
     content.pack_start(BrightnessSlider(), false, false, 0);

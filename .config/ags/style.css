@@ -1,56 +1,83 @@
-/* Catppuccin Mocha Palette */
-@define-color base #1e1e2e;
-@define-color mantle #181825;
-@define-color crust #11111b;
-@define-color text #cdd6f4;
-@define-color subtext #a6adc8;
-@define-color surface #313244;
-@define-color surface1 #45475a;
-@define-color blue #89b4fa;
-@define-color lavender #b4befe;
-@define-color red #f38ba8;
-@define-color green #a6e3a1;
-@define-color yellow #f9e2af;
+/* -----------------------------------------------------------------------------
+ * NamiConfig Advanced Control Center & Side Panel Theme
+ * Palette: Catppuccin Mocha Glassmorphic Dark
+ * ----------------------------------------------------------------------------- */
+
+@define-color base         rgba(30, 30, 46, 0.88);
+@define-color mantle       rgba(24, 24, 37, 0.92);
+@define-color crust        #11111b;
+@define-color surface      rgba(49, 50, 68, 0.65);
+@define-color surface1     rgba(69, 71, 90, 0.75);
+@define-color text         #cdd6f4;
+@define-color subtext      #a6adc8;
+@define-color blue         #89b4fa;
+@define-color lavender     #b4befe;
+@define-color sapphire     #74c7ec;
+@define-color red          #f38ba8;
+@define-color green        #a6e3a1;
+@define-color yellow       #f9e2af;
+@define-color peach        #fab387;
 
 * {
+    all: unset;
     font-family: "JetBrains Mono Nerd Font", "Inter", sans-serif;
     font-size: 13px;
+    color: @text;
+}
+
+/* --- Window Container --- */
+.sidepanel-window {
+    background-color: transparent;
 }
 
 .sidepanel-container {
-    background-color: rgba(30, 30, 46, 0.85);
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 16px;
-    min-width: 360px;
+    background-color: @base;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    padding: 20px;
+    min-width: 370px;
     margin: 8px;
-    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
 }
 
+/* --- Header Card --- */
 .sidepanel-header {
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: @surface;
+    border-radius: 18px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 12px;
 }
 
 .header-user {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     color: @lavender;
 }
 
-.header-clock {
+.header-uptime {
     font-size: 11px;
+    color: @sapphire;
+    font-weight: 500;
+}
+
+.header-clock {
+    font-size: 12px;
     color: @subtext;
+    margin-top: 2px;
 }
 
 .icon-btn {
-    background-color: @surface;
-    border-radius: 10px;
+    background-color: @surface1;
+    border-radius: 12px;
     padding: 8px 12px;
-    color: @text;
+    font-size: 14px;
+    transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
-    background-color: @surface1;
+    background-color: @blue;
+    color: @crust;
 }
 
 .power-btn:hover {
@@ -58,21 +85,55 @@
     color: @crust;
 }
 
-/* Quick Toggles */
+/* --- System Telemetry Card --- */
+.telemetry-card {
+    background-color: @surface;
+    border-radius: 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: 12px;
+}
+
+.telemetry-title {
+    font-size: 11px;
+    font-weight: bold;
+    color: @subtext;
+    margin-bottom: 8px;
+}
+
+.telemetry-bar progress, .telemetry-bar trough {
+    min-height: 8px;
+    border-radius: 6px;
+}
+
+.telemetry-bar trough {
+    background-color: @surface1;
+}
+
+.telemetry-bar progress {
+    background-color: @blue;
+}
+
+.ram-bar progress {
+    background-color: @peach;
+}
+
+/* --- Quick Toggles --- */
 .quick-toggles-container {
-    margin: 8px 0;
+    margin-bottom: 12px;
 }
 
 .toggle-btn {
     background-color: @surface;
-    border-radius: 12px;
-    padding: 10px;
-    color: @subtext;
+    border-radius: 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all 0.2s ease;
 }
 
 .toggle-btn:hover {
     background-color: @surface1;
-    color: @text;
+    border-color: rgba(137, 180, 250, 0.3);
 }
 
 .toggle-btn.active {
@@ -81,41 +142,47 @@
     font-weight: bold;
 }
 
-/* Sliders */
-.slider-box {
-    background-color: @surface;
-    border-radius: 12px;
-    padding: 6px 12px;
-    margin-bottom: 6px;
+.toggle-btn.active label {
+    color: @crust;
 }
 
-.slider-icon, .slider-icon-btn {
+/* --- Sliders --- */
+.slider-card {
+    background-color: @surface;
+    border-radius: 16px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.slider-icon-btn, .slider-icon {
+    font-size: 16px;
     color: @blue;
-    font-size: 15px;
-    margin-right: 8px;
+    margin-right: 10px;
 }
 
 .slider scale {
-    min-height: 8px;
+    min-height: 10px;
 }
 
 .slider trough {
-    min-height: 6px;
+    min-height: 8px;
     background-color: @surface1;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
 .slider highlight {
-    min-height: 6px;
+    min-height: 8px;
     background-color: @blue;
-    border-radius: 4px;
+    border-radius: 6px;
 }
 
-/* Notifications */
+/* --- Notifications Section --- */
 .notifications-center {
     background-color: @surface;
-    border-radius: 14px;
-    padding: 12px;
+    border-radius: 18px;
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .notifications-title {
@@ -125,62 +192,48 @@
 }
 
 .clear-btn {
+    background-color: rgba(243, 139, 168, 0.15);
     color: @red;
     font-size: 11px;
-    padding: 2px 6px;
-    border-radius: 6px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
 .clear-btn:hover {
-    background-color: rgba(243, 139, 168, 0.15);
+    background-color: @red;
+    color: @crust;
 }
 
 .notifications-scroll {
-    min-height: 180px;
-    margin-top: 8px;
+    min-height: 200px;
+    margin-top: 10px;
 }
 
 .empty-notifications {
     color: @subtext;
     font-style: italic;
-    padding: 20px;
+    padding: 24px;
 }
 
-.notification-item, .notification-toast {
-    background-color: @base;
-    border-radius: 10px;
-    padding: 10px;
+.notification-item {
+    background-color: @mantle;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 8px;
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.notification-app, .toast-app {
+.notification-app {
     font-size: 11px;
     font-weight: bold;
     color: @blue;
 }
 
-.notification-close, .toast-close {
-    color: @subtext;
+.notification-summary {
     font-size: 12px;
-}
-
-.notification-close:hover, .toast-close:hover {
-    color: @red;
-}
-
-.notification-summary, .toast-summary {
     font-weight: bold;
     color: @text;
     margin-top: 2px;
-}
-
-.notification-body, .toast-body {
-    font-size: 11px;
-    color: @subtext;
-    margin-top: 4px;
-}
-
-.notifications-popup-container {
-    margin: 12px;
-    min-width: 320px;
 }
