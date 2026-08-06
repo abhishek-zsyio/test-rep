@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
+"""
+test.py — Theme switcher helper with fzf integration
+"""
 
 import subprocess
 from pathlib import Path
 
 CONFIG_DIR = Path.home() / ".config"
-THEMES_DIR = CONFIG_DIR / "NamiThemes/all-themes"
+THEMES_DIR = CONFIG_DIR / "NamiThemes/catppuccin"
 
 theme_paths = {
     "kitty": {
@@ -69,11 +72,11 @@ def symlink_theme_file(app, theme_variant):
 
 
 def reload_apps():
-    subprocess.run(["pkill", "waybar"])
-    subprocess.run(["pkill", "-SIGUSR2", "mako"])
-    subprocess.run(["pkill", "-SIGUSR2", "swaync"])
-    subprocess.run(["killall", "-SIGUSR1", "kitty"], stderr=subprocess.DEVNULL)
-    subprocess.run(["notify-send", "Theme switched"])
+    subprocess.run(["pkill", "waybar"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(["pkill", "-SIGUSR2", "mako"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(["pkill", "-SIGUSR2", "swaync"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(["killall", "-SIGUSR1", "kitty"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(["notify-send", "Theme switched"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def apply_theme(theme_variant):

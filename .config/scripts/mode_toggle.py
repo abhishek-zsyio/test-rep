@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+"""
+mode_toggle.py — Dark/Light mode theme switcher for NamiConfig
+"""
 
 import subprocess
 import json
@@ -10,12 +13,11 @@ LIGHT = "Colloid-Light-Catppuccin"
 
 CONFIG_DIR = Path.home() / ".config"
 STATE_FILE = CONFIG_DIR / ".current_theme"
-WINDOWRULES_PATH = CONFIG_DIR / "hypr/windowrules.conf"
-BLUR_RULE = "layerrule = blur,waybar"
 
 # ====================== GTK Configuration ====================== #
 GTK3_PATH = CONFIG_DIR / "gtk-3.0/settings.ini"
 GTK4_PATH = CONFIG_DIR / "gtk-4.0/settings.ini"
+
 GTK_COMMON_SETTINGS = {
     "gtk-icon-theme-name": "Papirus-Dark",
     "gtk-font-name": "Adwaita Sans 11",
@@ -67,27 +69,39 @@ theme_paths = {
     },
 }
 
-# ====================== Notification Icons ====================== #
+# Notification Icons
 icon_light = "/usr/share/icons/Papirus-Dark/48x48/status/weather-clear.svg"
 icon_dark = "/usr/share/icons/Papirus-Dark/48x48/status/weather-clear-night.svg"
 
 
-# ====================== Helper Functions ====================== #
-def get_current_theme():
-    try:
-        result = subprocess.run(
-            ["gsettings", "get", "org.gnome.desktop.interface", "gtk-theme"],
-            stdout=subprocess.PIPE,
-            text=True,
-            check=True,
-        )
-        theme = result.stdout.strip().strip("'")
-        return "light" if theme == LIGHT else "dark"
-    except subprocess.CalledProcessError:
-        return "dark"
+def is_installed(cmd: str) -> bool:
+    return subprocess.run(["which", cmd], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
 
 
-def set_gtk_theme(theme):
+def get_current_theme() -> str:
+    if STATE_FILE.exists():
+        try:
+            val = STATE_FILE.read_text().strip().lower()
+            if val in ("light", "dark"):
+                return val
+        except Exception:
+            pass
+
+    if is_installed("gsettings"):
+        try:
+            result = subprocess.run(
+                ["gsettings", "get", "org.gnome.desktop.interface", "gtk-theme"],
+                stdout=subprocess.PIPE,
+                text=True,
+            )
+            theme = result.stdout.strip().strip("'")
+            return "light" if theme == LIGHT else "dark"
+        except Exception:
+            pass
+    return "dark"
+
+
+def set_gtk_theme(theme: str):
     if theme == "light":
         theme_name = LIGHT
         icon_theme = "Papirus-Light"
@@ -97,21 +111,10 @@ def set_gtk_theme(theme):
         icon_theme = "Papirus-Dark"
         prefer_dark = True
 
-    subprocess.run(
-        ["gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", theme_name]
-    )
-    subprocess.run(
-        ["gsettings", "set", "org.gnome.desktop.interface", "icon-theme", icon_theme]
-    )
-    subprocess.run(
-        [
-            "gsettings",
-            "set",
-            "org.gnome.desktop.interface",
-            "color-scheme",
-            "prefer-dark" if prefer_dark else "prefer-light",
-        ]
-    )
+    if is_installed("gsettings"):
+        subprocess.run(["gsettings", "set", "org.gnome.desktop.interface", "gtk-theme", theme_name], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["gsettings", "set", "org.gnome.desktop.interface", "icon-theme", icon_theme], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["gsettings", "set", "org.gnome.desktop.interface", "color-scheme", "prefer-dark" if prefer_dark else "prefer-light"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     def build_ini():
         lines = ["[Settings]"]
@@ -128,7 +131,9 @@ def set_gtk_theme(theme):
     GTK4_PATH.write_text(ini_content)
 
 
-def symlink_theme_file(app, theme):
+def symlink_theme_file(app: str, theme: str):
+    if app not in theme_paths:
+        return
     source = theme_paths[app][theme]
     target = theme_paths[app]["target"]
     if not source.exists():
@@ -140,109 +145,79 @@ def symlink_theme_file(app, theme):
     target.symlink_to(source)
 
 
-def switch_kitty(theme):
+def switch_kitty(theme: str):
     symlink_theme_file("kitty", theme)
-    subprocess.run("kill -10 $(pgrep kitty)", shell=True)
+    subprocess.run("kill -10 $(pgrep kitty) 2>/dev/null", shell=True)
 
 
-def switch_ghostty(theme):
+def switch_ghostty(theme: str):
     symlink_theme_file("ghostty", theme)
-    subprocess.run("kill -10 $(pgrep ghostty)", shell=True)
+    subprocess.run("kill -10 $(pgrep ghostty) 2>/dev/null", shell=True)
 
 
-def switch_waybar(theme):
+def switch_waybar(theme: str):
     symlink_theme_file("waybar", theme)
-    subprocess.run(["pkill", "waybar"])
+    subprocess.run(["pkill", "waybar"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     subprocess.Popen(["waybar"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
-def switch_mako(theme):
+def switch_mako(theme: str):
     symlink_theme_file("mako", theme)
-    subprocess.run(["pkill", "-SIGUSR2", "mako"])
+    subprocess.run(["pkill", "-SIGUSR2", "mako"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
-def switch_rofi(theme):
+def switch_rofi(theme: str):
     symlink_theme_file("rofi", theme)
 
 
-def switch_swaync(theme):
+def switch_swaync(theme: str):
     symlink_theme_file("swaync", theme)
-    subprocess.run(["pkill", "-SIGUSR2", "swaync"])
+    subprocess.run(["pkill", "-SIGUSR2", "swaync"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def reload_nemo():
-    if (
-        subprocess.run(["pgrep", "-x", "nemo"], stdout=subprocess.DEVNULL).returncode
-        == 0
-    ):
-        subprocess.run(["nemo", "--quit"])
-        subprocess.Popen(["nemo"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if is_installed("nemo"):
+        res = subprocess.run(["pgrep", "-x", "nemo"], stdout=subprocess.DEVNULL)
+        if res.returncode == 0:
+            subprocess.run(["nemo", "--quit"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.Popen(["nemo"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
-def switch_vscode_theme(theme):
+def switch_vscode_theme(theme: str):
     settings_path = CONFIG_DIR / "Code/User/settings.json"
     if not settings_path.exists():
-        print(f"VSCode settings not found at {settings_path}")
         return
 
     try:
         with open(settings_path, "r") as f:
             settings = json.load(f)
-    except json.JSONDecodeError:
-        print("Error: VSCode settings.json is not valid JSON.")
+        settings["workbench.colorTheme"] = "Catppuccin Latte" if theme == "light" else "Catppuccin Mocha"
+        with open(settings_path, "w") as f:
+            json.dump(settings, f, indent=2)
+    except Exception:
+        pass
+
+
+def notify(theme: str):
+    if is_installed("notify-send"):
+        icon = icon_light if theme == "light" else icon_dark
+        if not Path(icon).exists():
+            icon = "dialog-information"
+        subprocess.run(["notify-send", "-i", icon, f"Switched to {theme.capitalize()} Theme"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def switch_spicetify(theme: str):
+    if not is_installed("spicetify"):
         return
-
-    settings["workbench.colorTheme"] = (
-        "Catppuccin Latte" if theme == "light" else "Catppuccin Mocha"
-    )
-
-    with open(settings_path, "w") as f:
-        json.dump(settings, f, indent=2)
-
-
-def notify(theme):
-    icon = icon_light if theme == "light" else icon_dark
-    subprocess.run(
-        ["notify-send", "-i", icon, f"Switched to {theme.capitalize()} Theme"]
-    )
-
-
-def switch_spicetify(theme):
     color_scheme = "latte" if theme == "light" else "mocha"
-    subprocess.run(["spicetify", "config", "current_theme", "catppuccin"])
-    subprocess.run(["spicetify", "config", "color_scheme", color_scheme])
-    subprocess.run(
-        [
-            "spicetify",
-            "config",
-            "inject_css",
-            "1",
-            "inject_theme_js",
-            "1",
-            "replace_colors",
-            "1",
-            "overwrite_assets",
-            "1",
-        ]
-    )
-    subprocess.run(["spicetify", "apply"])
+    try:
+        subprocess.run(["spicetify", "config", "current_theme", "catppuccin"], stdout=subprocess.DEVNULL)
+        subprocess.run(["spicetify", "config", "color_scheme", color_scheme], stdout=subprocess.DEVNULL)
+        subprocess.run(["spicetify", "apply"], stdout=subprocess.DEVNULL)
+    except Exception:
+        pass
 
 
-def update_windowrules_for_blur(theme):
-    if not WINDOWRULES_PATH.exists():
-        return
-    lines = WINDOWRULES_PATH.read_text().splitlines()
-
-    if theme == "dark":
-        if BLUR_RULE not in lines:
-            lines.append(BLUR_RULE)
-    else:
-        lines = [line for line in lines if line.strip() != BLUR_RULE]
-
-    WINDOWRULES_PATH.write_text("\n".join(lines) + "\n")
-
-
-# ====================== Main ====================== #
 def toggle_theme():
     current = get_current_theme()
     new_theme = "light" if current == "dark" else "dark"
@@ -254,12 +229,15 @@ def toggle_theme():
     switch_rofi(new_theme)
     switch_swaync(new_theme)
     switch_vscode_theme(new_theme)
-    # switch_ghostty(new_theme)
+    switch_ghostty(new_theme)
     switch_spicetify(new_theme)
-    update_windowrules_for_blur(new_theme)
     reload_nemo()
-    notify(new_theme)
 
+    # Save state
+    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    STATE_FILE.write_text(new_theme)
+
+    notify(new_theme)
     print(f"Switched to {new_theme.capitalize()} Theme")
 
 

@@ -1,6 +1,9 @@
-#!/usr/bin/env python3
 
-import os
+#!/usr/bin/env python3
+"""
+change_wallpaper.py — Dynamic wallpaper switcher for Hyprland (supports swww & hyprpaper)
+"""
+
 import sys
 import random
 import json
@@ -14,20 +17,15 @@ TRANSITION_TYPE = "right"
 TRANSITION_DURATION = "2"
 
 
-# === Functions ===
-def start_swww_daemon():
-    try:
-        subprocess.run(
-            ["pgrep", "-x", "swww-daemon"], check=True, stdout=subprocess.DEVNULL
-        )
-    except subprocess.CalledProcessError:
-        subprocess.Popen(["swww-daemon"])
+def is_installed(cmd: str) -> bool:
+    return subprocess.run(["which", cmd], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0
 
 
 def get_wallpapers():
     if not WALLPAPER_DIR.exists():
         print(f"❌ Wallpaper directory not found: {WALLPAPER_DIR}")
         sys.exit(1)
+    
     wallpapers = sorted(
         [
             str(f)
@@ -41,36 +39,62 @@ def get_wallpapers():
     return wallpapers
 
 
-def save_state(index):
+def save_state(index: int):
     STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
     with open(STATE_FILE, "w") as f:
         json.dump({"index": index}, f)
 
 
-def load_state():
+def load_state() -> int:
     if STATE_FILE.exists():
-        with open(STATE_FILE) as f:
-            data = json.load(f)
-            return data.get("index", 0)
+        try:
+            with open(STATE_FILE) as f:
+                data = json.load(f)
+                return data.get("index", 0)
+        except Exception:
+            return 0
     return 0
 
 
-def set_wallpaper(path):
-    subprocess.run(
-        [
-            "swww",
-            "img",
-            path,
-            "--transition-type",
-            TRANSITION_TYPE,
-            "--transition-duration",
-            TRANSITION_DURATION,
-        ]
-    )
-    print(f"🌄 Wallpaper set: {path}")
+def set_wallpaper(path: str):
+    # Option A: Try swww if installed
+    if is_installed("swww"):
+        try:
+            # Ensure daemon is running
+            pgrep = subprocess.run(["pgrep", "-x", "swww-daemon"], stdout=subprocess.DEVNULL)
+            if pgrep.returncode != 0:
+                subprocess.Popen(["swww-daemon"])
+            
+            subprocess.run(
+                [
+                    "swww",
+                    "img",
+                    path,
+                    "--transition-type",
+                    TRANSITION_TYPE,
+                    "--transition-duration",
+                    TRANSITION_DURATION,
+                ],
+                check=True,
+            )
+            print(f"🌄 Wallpaper set via swww: {path}")
+            return
+        except Exception as e:
+            print(f"⚠️ swww wallpaper set warning: {e}")
+
+    # Option B: Fallback to hyprpaper
+    if is_installed("hyprpaper") and is_installed("hyprctl"):
+        try:
+            subprocess.run(["hyprctl", "hyprpaper", "preload", path], stdout=subprocess.DEVNULL)
+            subprocess.run(["hyprctl", "hyprpaper", "wallpaper", f",{path}"], stdout=subprocess.DEVNULL)
+            print(f"🌄 Wallpaper set via hyprpaper: {path}")
+            return
+        except Exception as e:
+            print(f"⚠️ hyprpaper wallpaper set warning: {e}")
+
+    print(f"🌄 Wallpaper path ready: {path}")
 
 
-# === Main Logic ===
 def main():
     wallpapers = get_wallpapers()
     total = len(wallpapers)
@@ -95,7 +119,6 @@ def main():
         print("❌ Invalid argument. Use -i / -0 / -p")
         sys.exit(1)
 
-    start_swww_daemon()
     set_wallpaper(wallpapers[index])
     save_state(index)
 
