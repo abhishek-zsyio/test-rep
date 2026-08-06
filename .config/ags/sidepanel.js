@@ -1,32 +1,41 @@
-import { App, Gtk, Gdk } from "astal/gtk3";
-import { Variable, exec, execAsync } from "astal";
-import Notif from "gi://AstalNotif";
-import Mpris from "gi://AstalMpris";
-import Wp from "gi://AstalWp";
-import Network from "gi://AstalNetwork";
-import Bluetooth from "gi://AstalBluetooth";
+import Gtk from "gi://Gtk?version=3.0";
+import Gdk from "gi://Gdk?version=3.0";
+import GLib from "gi://GLib";
+import Gio from "gi://Gio";
 
-const notif = Notif.get_default();
-const mpris = Mpris.get_default();
-const audio = Wp.get_default()?.audio;
-const network = Network.get_default();
-const bluetooth = Bluetooth.get_default();
+function exec(cmd) {
+    try {
+        const [ok, out] = GLib.spawn_command_line_sync(cmd);
+        return ok ? new TextDecoder().decode(out).trim() : "";
+    } catch (e) {
+        return "";
+    }
+}
 
-// --- Header ---
-function Header() {
+function execAsync(cmd) {
+    try {
+        GLib.spawn_command_line_async(cmd);
+    } catch (e) {}
+}
+
+// --- Header Widget ---
+function Header(win) {
     const userLabel = new Gtk.Label({
         className: "header-user",
         xalign: 0,
-        label: exec("whoami").toUpperCase(),
+        label: (exec("whoami") || "USER").toUpperCase(),
     });
 
     const clockLabel = new Gtk.Label({
         className: "header-clock",
         xalign: 0,
+        label: exec('date "+%A, %B %d • %H:%M"'),
     });
 
-    const timeVar = Variable("").poll(1000, () => exec('date "+%A, %B %d • %H:%M"'));
-    timeVar.subscribe(val => clockLabel.set_text(val));
+    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
+        clockLabel.set_text(exec('date "+%A, %B %d • %H:%M"'));
+        return GLib.SOURCE_CONTINUE;
+    });
 
     const infoBox = new Gtk.Box({
         orientation: Gtk.Orientation.VERTICAL,
@@ -41,8 +50,8 @@ function Header() {
         tooltip_text: "Lock Screen",
     });
     lockBtn.connect("clicked", () => {
-        App.toggle_window("sidepanel");
-        execAsync("hyprlock").catch(() => {});
+        win.hide();
+        execAsync("hyprlock");
     });
 
     const powerBtn = new Gtk.Button({
@@ -51,8 +60,8 @@ function Header() {
         tooltip_text: "Power Menu",
     });
     powerBtn.connect("clicked", () => {
-        App.toggle_window("sidepanel");
-        execAsync("pkill -x rofi || ~/.config/rofi/powermenu/powermenu.sh").catch(() => {});
+        win.hide();
+        execAsync("pkill -x rofi || ~/.config/rofi/powermenu/powermenu.sh");
     });
 
     const actionsBox = new Gtk.Box({
@@ -79,9 +88,7 @@ function QuickToggles() {
         label: "󰤨  Wi-Fi",
     });
     wifiBtn.connect("clicked", () => {
-        if (network && network.wifi) {
-            network.wifi.set_enabled(!network.wifi.enabled);
-        }
+        execAsync("nmcli radio wifi toggle");
     });
 
     const btBtn = new Gtk.Button({
@@ -89,9 +96,7 @@ function QuickToggles() {
         label: "󰂯  Bluetooth",
     });
     btBtn.connect("clicked", () => {
-        if (bluetooth) {
-            bluetooth.toggle();
-        }
+        execAsync("rfkill toggle bluetooth");
     });
 
     const row1 = new Gtk.Box({
@@ -107,19 +112,12 @@ function QuickToggles() {
         label: "󰍬  Mic",
     });
     micBtn.connect("clicked", () => {
-        if (audio && audio.default_microphone) {
-            audio.default_microphone.set_mute(!audio.default_microphone.mute);
-        }
+        execAsync("pactl set-source-mute @DEFAULT_SOURCE@ toggle");
     });
 
     const dndBtn = new Gtk.Button({
         className: "toggle-btn",
         label: "󰂛  DND",
-    });
-    dndBtn.connect("clicked", () => {
-        if (notif) {
-            notif.set_dont_disturb(!notif.dont_disturb);
-        }
     });
 
     const row2 = new Gtk.Box({
@@ -148,9 +146,7 @@ function VolumeSlider() {
         label: "󰕾",
     });
     iconBtn.connect("clicked", () => {
-        if (audio && audio.default_speaker) {
-            audio.default_speaker.set_mute(!audio.default_speaker.mute);
-        }
+        execAsync("pactl set-sink-mute @DEFAULT_SINK@ toggle");
     });
 
     const scale = new Gtk.Scale({
@@ -159,19 +155,19 @@ function VolumeSlider() {
         draw_value: false,
         hexpand: true,
     });
-    scale.set_range(0, 1);
+    scale.set_range(0, 100);
 
-    if (audio && audio.default_speaker) {
-        scale.set_value(audio.default_speaker.volume || 0);
-        audio.default_speaker.connect("notify::volume", (spk) => {
-            scale.set_value(spk.volume);
-        });
-    }
+    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
+        const volStr = exec("sh -c \"pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\\d+(?=%)' | head -n1\"");
+        if (volStr) {
+            scale.set_value(Number(volStr));
+        }
+        return GLib.SOURCE_CONTINUE;
+    });
 
     scale.connect("value-changed", (sc) => {
-        if (audio && audio.default_speaker) {
-            audio.default_speaker.set_volume(sc.get_value());
-        }
+        const val = Math.round(sc.get_value());
+        execAsync(`pactl set-sink-volume @DEFAULT_SINK@ ${val}%`);
     });
 
     const box = new Gtk.Box({
@@ -196,22 +192,22 @@ function BrightnessSlider() {
         draw_value: false,
         hexpand: true,
     });
-    scale.set_range(0, 1);
+    scale.set_range(0, 100);
 
-    const brightVar = Variable(0).poll(2000, () => {
+    GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
         try {
             const cur = Number(exec("brightnessctl g"));
             const max = Number(exec("brightnessctl m"));
-            return max > 0 ? cur / max : 0;
-        } catch (e) {
-            return 0;
-        }
+            if (max > 0) {
+                scale.set_value(Math.round((cur / max) * 100));
+            }
+        } catch (e) {}
+        return GLib.SOURCE_CONTINUE;
     });
-    brightVar.subscribe(val => scale.set_value(val));
 
     scale.connect("value-changed", (sc) => {
-        const pct = Math.round(sc.get_value() * 100);
-        execAsync(`brightnessctl s ${pct}%`).catch(() => {});
+        const pct = Math.round(sc.get_value());
+        execAsync(`brightnessctl s ${pct}%`);
     });
 
     const box = new Gtk.Box({
@@ -243,6 +239,12 @@ function NotificationsCenter() {
         spacing: 8,
     });
 
+    const emptyLabel = new Gtk.Label({
+        className: "empty-notifications",
+        label: "No Notifications",
+    });
+    listContainer.pack_start(emptyLabel, true, true, 0);
+
     const scroll = new Gtk.ScrolledWindow({
         className: "notifications-scroll",
         hscrollbar_policy: Gtk.PolicyType.NEVER,
@@ -250,55 +252,6 @@ function NotificationsCenter() {
         vexpand: true,
     });
     scroll.add(listContainer);
-
-    function updateList() {
-        listContainer.foreach(child => listContainer.remove(child));
-        const notifs = notif ? notif.get_notifications() : [];
-
-        if (notifs.length === 0) {
-            const emptyLabel = new Gtk.Label({
-                className: "empty-notifications",
-                label: "No Notifications",
-            });
-            listContainer.pack_start(emptyLabel, true, true, 0);
-        } else {
-            notifs.forEach(n => {
-                const item = new Gtk.Box({
-                    className: "notification-item",
-                    orientation: Gtk.Orientation.VERTICAL,
-                });
-                const appLbl = new Gtk.Label({
-                    className: "notification-app",
-                    label: n.appName || "System",
-                    xalign: 0,
-                    hexpand: true,
-                });
-                const summaryLbl = new Gtk.Label({
-                    className: "notification-summary",
-                    label: n.summary || "",
-                    xalign: 0,
-                });
-                item.pack_start(appLbl, false, false, 0);
-                item.pack_start(summaryLbl, false, false, 0);
-                listContainer.pack_start(item, false, false, 0);
-            });
-        }
-        listContainer.show_all();
-    }
-
-    clearBtn.connect("clicked", () => {
-        if (notif) {
-            notif.get_notifications().forEach(n => n.dismiss());
-            updateList();
-        }
-    });
-
-    if (notif) {
-        notif.connect("notified", () => updateList());
-        notif.connect("resolved", () => updateList());
-    }
-
-    updateList();
 
     const headerBox = new Gtk.Box({
         className: "notifications-header",
@@ -320,26 +273,27 @@ function NotificationsCenter() {
 
 // --- SidePanel Window ---
 export function SidePanel() {
+    const win = new Gtk.Window({
+        name: "sidepanel",
+        type: Gtk.WindowType.TOPLEVEL,
+        decorated: false,
+        resizable: false,
+        default_width: 360,
+        default_height: 700,
+    });
+
     const content = new Gtk.Box({
         className: "sidepanel-container",
         orientation: Gtk.Orientation.VERTICAL,
         spacing: 14,
     });
 
-    content.pack_start(Header(), false, false, 0);
+    content.pack_start(Header(win), false, false, 0);
     content.pack_start(QuickToggles(), false, false, 0);
     content.pack_start(VolumeSlider(), false, false, 0);
     content.pack_start(BrightnessSlider(), false, false, 0);
     content.pack_start(NotificationsCenter(), true, true, 0);
 
-    const win = new Gtk.Window({
-        name: "sidepanel",
-        type: Gtk.WindowType.TOPLEVEL,
-        decorated: false,
-        resizable: false,
-    });
     win.add(content);
-
-    App.add_window(win);
     return win;
 }
