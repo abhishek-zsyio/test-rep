@@ -61,7 +61,7 @@ ALL_PACKAGES=(
     
     # Status bar, notifications & overlays
     waybar
-    ags
+    aylurs-gtk-shell
     mako
     swaync
     swayosd
@@ -113,7 +113,7 @@ if command -v pacman >/dev/null 2>&1; then
 
     MISSING=()
     for pkg in "${ALL_PACKAGES[@]}"; do
-        if ! pacman -Qq "$pkg" >/dev/null 2>&1 && ! command -v "$pkg" >/dev/null 2>&1; then
+        if ! pacman -Qq "$pkg" >/dev/null 2>&1 && ! command -v "$pkg" >/dev/null 2>&1 && ! command -v ags >/dev/null 2>&1; then
             MISSING+=("$pkg")
         fi
     done
