@@ -45,7 +45,7 @@ function Workspaces() {
         }, i === 1 ? "ws-btn active" : "ws-btn");
 
         btn.connect("clicked", () => {
-            execAsync(`hyprctl dispatch workspace ${i}`);
+            execAsync(`sh -c 'hyprctl dispatch workspace ${i}'`);
             buttons.forEach((b, idx) => {
                 b.get_style_context().remove_class("active");
                 if (idx + 1 === i) {
