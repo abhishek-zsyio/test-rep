@@ -41,6 +41,7 @@ ALL_PACKAGES=(
     # Core Hyprland Desktop Ecosystem
     hyprland
     hyprpaper
+    swww
     hyprlock
     hypridle
     hyprpolkitagent
