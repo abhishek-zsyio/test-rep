@@ -1,0 +1,3 @@
+#window { background-color: #2e3440; color: #eceff4; border: 2px solid #88c0d0; border-radius: 8px; }
+#search { background-color: #3b4252; color: #eceff4; border-bottom: 1px solid #434c5e; }
+#item:selected { background-color: #434c5e; color: #88c0d0; }

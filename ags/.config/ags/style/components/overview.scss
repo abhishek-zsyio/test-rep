@@ -1,0 +1,5 @@
+.overview-container {
+  background-color: rgba($base, 0.9);
+  padding: 40px;
+  .overview-card { background-color: $surface; border: 1px solid $accent; border-radius: 8px; padding: 20px; margin: 10px; }
+}

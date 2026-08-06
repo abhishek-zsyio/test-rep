@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+case "${1:-}" in
+    --inc)
+        wpctl set-volume -l 1.5 @DEFAULT_AUDIO_SINK@ 5%+
+        ;;
+    --dec)
+        wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+        ;;
+    --toggle)
+        wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+        ;;
+    *)
+        echo "Usage: volume <--inc|--dec|--toggle>"
+        exit 1
+        ;;
+esac

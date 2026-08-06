@@ -1,0 +1,16 @@
+@import "colors";
+@import "components/bar";
+@import "components/notifications";
+@import "components/dock";
+@import "components/lockscreen";
+@import "components/osd";
+@import "components/control-center";
+@import "components/theme-picker";
+@import "components/overview";
+@import "components/screenshot";
+
+* {
+  all: unset;
+  font-family: "JetBrainsMono Nerd Font", sans-serif;
+  font-size: 13px;
+}

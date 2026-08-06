@@ -1,0 +1,22 @@
+.bar-container {
+  background-color: rgba($base, 0.85);
+  border-bottom: 1px solid rgba($accent, 0.3);
+  padding: 4px 12px;
+  color: $text;
+
+  .workspaces button {
+    padding: 2px 8px;
+    margin: 0 2px;
+    border-radius: 4px;
+    color: $subtle;
+    &.focused {
+      background-color: $accent;
+      color: $base;
+    }
+  }
+
+  .clock {
+    font-weight: bold;
+    color: $text;
+  }
+}

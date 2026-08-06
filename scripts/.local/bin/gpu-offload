@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ "$#" -eq 0 ]; then
+    echo "Usage: gpu-offload <command> [args...]"
+    exit 1
+fi
+
+ACTIVE_HW="$(readlink -f "$HOME/.config/hypr/hardware/active.lua" 2>/dev/null || echo "")"
+
+if [[ "$ACTIVE_HW" == *"laptop.lua"* ]]; then
+    export DRI_PRIME=1
+    export __NV_PRIME_RENDER_OFFLOAD=1
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+fi
+
+exec "$@"

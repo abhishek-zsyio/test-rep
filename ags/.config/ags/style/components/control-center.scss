@@ -1,0 +1,10 @@
+.control-center-container {
+  background-color: rgba($surface, 0.95);
+  border: 1px solid $accent;
+  border-radius: 12px;
+  padding: 16px;
+  width: 300px;
+  color: $text;
+  .header { font-size: 16px; font-weight: bold; margin-bottom: 12px; }
+  .toggle-button { background-color: $overlay; border-radius: 6px; padding: 8px; margin-bottom: 8px; }
+}

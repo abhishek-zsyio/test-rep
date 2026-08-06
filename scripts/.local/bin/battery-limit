@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+LIMIT="${1:-80}"
+THRESH_FILE="/sys/class/power_supply/BAT0/charge_control_end_threshold"
+
+if [ -f "$THRESH_FILE" ]; then
+    echo "$LIMIT" | sudo tee "$THRESH_FILE"
+    echo "Battery threshold set to ${LIMIT}%"
+else
+    echo "Battery threshold file not present ($THRESH_FILE)"
+fi

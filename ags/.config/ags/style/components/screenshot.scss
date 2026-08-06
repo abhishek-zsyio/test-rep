@@ -1,0 +1,7 @@
+.screenshot-container {
+  background-color: rgba($surface, 0.95);
+  border: 1px solid $accent;
+  border-radius: 8px;
+  padding: 12px;
+  button { background-color: $overlay; border-radius: 6px; padding: 8px 16px; margin: 4px; color: $text; }
+}
