@@ -34,6 +34,7 @@ I customized **SwayNC** by editing the `.blp` layout file **directly in the sour
 .
 ├── .config/
 │   ├── bat/
+│   ├── ags/
 │   ├── cava/
 │   ├── hypr/
 │   ├── kitty/

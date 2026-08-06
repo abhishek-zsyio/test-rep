@@ -113,7 +113,7 @@ fi
 info "[2/4] Checking for pre-existing configuration conflicts..."
 
 TARGET_CONFIG_ITEMS=(
-    "cava" "ghostty" "hypr" "kitty" "Kvantum" "mako" "NamiThemes"
+    "ags" "cava" "ghostty" "hypr" "kitty" "Kvantum" "mako" "NamiThemes"
     "nvim" "qt5ct" "qt6ct" "rofi" "scripts" "spicetify" "starship.toml"
     "swappy" "swaync" "waybar" "zathura" ".current_theme"
 )

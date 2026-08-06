@@ -17,6 +17,7 @@ hl.bind(mainMod .. " + SPACE", hl.dsp.exec_cmd("pkill -x rofi || ~/.config/rofi/
 hl.bind(mainMod .. " + BACKSPACE", hl.dsp.exec_cmd("pkill -x rofi || ~/.config/rofi/powermenu/powermenu.sh"))
 hl.bind("CTRL + ALT + W", hl.dsp.exec_cmd("killall waybar || waybar"))
 hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("waypaper"))
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("ags -t sidepanel"))
 hl.bind(mainMod .. " + SHIFT + T", hl.dsp.exec_cmd("/home/abhishek/.config/scripts/mode_toggle.py"))
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.exec_cmd("/home/abhishek/.config/scripts/focus_mode.py"))
 

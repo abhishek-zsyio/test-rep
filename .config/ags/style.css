@@ -1,0 +1,229 @@
+/* Catppuccin Mocha Palette */
+@define-color base #1e1e2e;
+@define-color mantle #181825;
+@define-color crust #11111b;
+@define-color text #cdd6f4;
+@define-color subtext #a6adc8;
+@define-color surface #313244;
+@define-color surface1 #45475a;
+@define-color blue #89b4fa;
+@define-color lavender #b4befe;
+@define-color red #f38ba8;
+@define-color green #a6e3a1;
+@define-color yellow #f9e2af;
+
+* {
+    all: unset;
+    font-family: "JetBrains Mono Nerd Font", "Inter", sans-serif;
+    font-size: 13px;
+}
+
+.sidepanel-container {
+    background-color: rgba(30, 30, 46, 0.85);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 16px;
+    width: 360px;
+    margin: 8px;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+}
+
+.sidepanel-header {
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header-user {
+    font-size: 14px;
+    font-weight: bold;
+    color: @lavender;
+}
+
+.header-clock {
+    font-size: 11px;
+    color: @subtext;
+}
+
+.icon-btn {
+    background-color: @surface;
+    border-radius: 10px;
+    padding: 8px 12px;
+    color: @text;
+    transition: all 0.2s ease;
+}
+
+.icon-btn:hover {
+    background-color: @surface1;
+}
+
+.power-btn:hover {
+    background-color: @red;
+    color: @crust;
+}
+
+/* Quick Toggles */
+.quick-toggles-grid {
+    margin: 8px 0;
+}
+
+.toggle-btn {
+    background-color: @surface;
+    border-radius: 12px;
+    padding: 10px;
+    color: @subtext;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+    background-color: @surface1;
+    color: @text;
+}
+
+.toggle-btn.active {
+    background-color: @blue;
+    color: @crust;
+    font-weight: bold;
+}
+
+/* Sliders */
+.slider-box {
+    background-color: @surface;
+    border-radius: 12px;
+    padding: 6px 12px;
+    margin-bottom: 6px;
+}
+
+.slider-icon, .slider-icon-btn {
+    color: @blue;
+    font-size: 15px;
+    margin-right: 8px;
+}
+
+.slider slider {
+    min-height: 8px;
+    min-width: 8px;
+    background-color: @subtext;
+    border-radius: 50%;
+}
+
+.slider trough {
+    min-height: 6px;
+    background-color: @surface1;
+    border-radius: 4px;
+}
+
+.slider highlight {
+    min-height: 6px;
+    background-color: @blue;
+    border-radius: 4px;
+}
+
+/* Media Player */
+.media-player {
+    background-color: @surface;
+    border-radius: 14px;
+    padding: 12px;
+    margin: 8px 0;
+}
+
+.media-art {
+    border-radius: 8px;
+}
+
+.media-title {
+    font-weight: bold;
+    color: @text;
+}
+
+.media-artist {
+    font-size: 11px;
+    color: @subtext;
+}
+
+.media-controls button {
+    background-color: transparent;
+    color: @text;
+    font-size: 16px;
+    padding: 6px;
+    border-radius: 8px;
+}
+
+.media-controls button:hover {
+    background-color: @surface1;
+    color: @blue;
+}
+
+/* Notifications */
+.notifications-center {
+    background-color: @surface;
+    border-radius: 14px;
+    padding: 12px;
+}
+
+.notifications-title {
+    font-weight: bold;
+    color: @lavender;
+    font-size: 14px;
+}
+
+.clear-btn {
+    color: @red;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.clear-btn:hover {
+    background-color: rgba(243, 139, 168, 0.15);
+}
+
+.notifications-scroll {
+    min-height: 180px;
+    max-height: 320px;
+    margin-top: 8px;
+}
+
+.empty-notifications {
+    color: @subtext;
+    font-style: italic;
+    padding: 20px;
+}
+
+.notification-item, .notification-toast {
+    background-color: @base;
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.notification-app, .toast-app {
+    font-size: 11px;
+    font-weight: bold;
+    color: @blue;
+}
+
+.notification-close, .toast-close {
+    color: @subtext;
+    font-size: 12px;
+}
+
+.notification-close:hover, .toast-close:hover {
+    color: @red;
+}
+
+.notification-summary, .toast-summary {
+    font-weight: bold;
+    color: @text;
+    margin-top: 2px;
+}
+
+.notification-body, .toast-body {
+    font-size: 11px;
+    color: @subtext;
+    margin-top: 4px;
+}
+
+.notifications-popup-container {
+    margin: 12px;
+    width: 320px;
+}

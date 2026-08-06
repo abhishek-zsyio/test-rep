@@ -61,6 +61,7 @@ ALL_PACKAGES=(
     
     # Status bar, notifications & overlays
     waybar
+    ags
     mako
     swaync
     swayosd
