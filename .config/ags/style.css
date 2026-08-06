@@ -19,10 +19,13 @@
 @define-color peach        #fab387;
 
 * {
-    all: unset;
     font-family: "JetBrains Mono Nerd Font", "Inter", sans-serif;
     font-size: 13px;
     color: @text;
+}
+
+window, .sidepanel-window, .bar-window {
+    background-color: transparent;
 }
 
 /* --- Top Bar Styling --- */
@@ -87,11 +90,7 @@
     color: @sapphire;
 }
 
-/* --- Window Container --- */
-.sidepanel-window {
-    background-color: transparent;
-}
-
+/* --- Side Panel Container --- */
 .sidepanel-container {
     background-color: @base;
     border: 1px solid rgba(255, 255, 255, 0.12);

@@ -328,7 +328,14 @@ export function SidePanel() {
         resizable: false,
         default_width: 370,
         default_height: 740,
-    });
+    }, "sidepanel-window");
+
+    const screen = win.get_screen();
+    const visual = screen ? screen.get_rgba_visual() : null;
+    if (visual) {
+        win.set_visual(visual);
+    }
+    win.set_app_paintable(true);
 
     const content = el(Gtk.Box, {
         orientation: Gtk.Orientation.VERTICAL,

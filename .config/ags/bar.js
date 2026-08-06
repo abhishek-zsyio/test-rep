@@ -146,7 +146,14 @@ export function Bar() {
         type: Gtk.WindowType.TOPLEVEL,
         decorated: false,
         resizable: false,
-    });
+    }, "bar-window");
+
+    const screen = win.get_screen();
+    const visual = screen ? screen.get_rgba_visual() : null;
+    if (visual) {
+        win.set_visual(visual);
+    }
+    win.set_app_paintable(true);
 
     const left = Workspaces();
     const center = WindowTitle();

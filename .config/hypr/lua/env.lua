@@ -1,6 +1,10 @@
 -- Environment Variables & XWayland Settings
 -- See https://wiki.hypr.land/Configuring/Environment-variables/
 
+hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
+hl.env("XDG_SESSION_DESKTOP", "Hyprland")
+hl.env("XDG_SESSION_TYPE", "wayland")
+
 hl.env("QT_QPA_PLATFORM", "wayland")
 hl.env("GDK_BACKEND", "wayland")
 hl.env("SDL_VIDEODRIVER", "wayland")

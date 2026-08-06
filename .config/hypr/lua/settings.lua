@@ -49,6 +49,7 @@ hl.config({
     misc = {
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
+        suppress_portal_warnings = true,
         background_color = "0x11111b",
     },
 
