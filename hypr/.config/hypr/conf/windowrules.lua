@@ -2,28 +2,28 @@
 
 -- Floating window rules
 hl.window_rule({
-    name = "float-utilities",
-    match = { class = "nwg-look|qt5ct|qt6ct|pavucontrol|blueman-manager" },
+    name  = "float-utilities",
+    match = { class = "(nwg-look|qt5ct|qt6ct|pavucontrol|blueman-manager)" },
     float = true,
 })
 
 hl.window_rule({
-    name = "walker-float",
+    name  = "walker-float",
     match = { class = "walker" },
     float = true,
 })
 
 -- Opacity rules
 hl.window_rule({
-    name = "kitty-opacity",
-    match = { class = "kitty" },
+    name    = "kitty-opacity",
+    match   = { class = "kitty" },
     opacity = 0.95,
 })
 
--- Layer rules for AGS shell components (blur & ignorezero)
+-- Layer rules for AGS shell components
 hl.layer_rule({
-    name = "ags-blur",
-    match = { target = "ags-.*" },
-    blur = true,
-    ignore_zero = true,
+    name         = "ags-blur",
+    match        = { namespace = "^ags-.*" },
+    blur         = true,
+    ignore_alpha = 0.1,
 })
