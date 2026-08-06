@@ -25,10 +25,7 @@ try {
 const sidePanelWindow = SidePanel();
 const notificationsWindow = NotificationsPopup();
 
-export default {
-    style: cssPath,
-    windows: [
-        sidePanelWindow,
-        notificationsWindow,
-    ],
-};
+sidePanelWindow.show_all();
+notificationsWindow.show_all();
+
+Gtk.main();
