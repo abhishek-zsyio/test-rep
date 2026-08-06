@@ -12,7 +12,11 @@ hl.env("HYPRCURSOR_THEME", "Bibata-Modern-Ice")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("XCURSOR_SIZE", "24")
 
+-- VM & Hardware Cursor Fallback
 hl.env("WLR_NO_HARDWARE_CURSORS", "1")
+hl.env("WLR_RENDERER_ALLOW_SOFTWARE", "1")
+
+-- NVIDIA Driver Envs
 hl.env("LIBVA_DRIVER_NAME", "nvidia")
 hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
 hl.env("GBM_BACKEND", "nvidia-drm")

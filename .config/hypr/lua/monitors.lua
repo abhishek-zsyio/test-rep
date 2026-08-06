@@ -1,17 +1,25 @@
--- Monitor Configurations
+-- Monitor Configurations (Optimized for VM & Physical Displays)
 -- See https://wiki.hypr.land/Configuring/Monitors/
 
+-- Default fallback rule for all displays & VM dynamic res resizing
 hl.monitor({
     output   = "",
+    mode     = "preferred",
+    position = "auto",
+    scale    = "auto",
+})
+
+-- Specific Virtual Machine Display Outputs (QEMU / KVM / VirtualBox / VMware)
+hl.monitor({
+    output   = "Virtual-1",
     mode     = "preferred",
     position = "auto",
     scale    = "1",
 })
 
 hl.monitor({
-    output    = "HDMI-A-1",
-    mode      = "1366x768@59.79Hz",
-    position  = "auto",
-    scale     = "auto",
-    transform = 3,
+    output   = "VGA-1",
+    mode     = "preferred",
+    position = "auto",
+    scale    = "1",
 })
