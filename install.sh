@@ -22,7 +22,7 @@ if command -v pacman &>/dev/null; then
         hyprland hypridle hyprlock hyprpaper stow kitty alacritty foot jq dart-sass nodejs npm wl-clipboard
         brightnessctl acpi upower playerctl polkit-gnome networkmanager network-manager-applet
         bluez bluez-utils blueman power-profiles-daemon pamixer grim slurp libnotify
-        pipewire pipewire-pulse pipewire-alsa pipewire-jack wireplumber
+        pipewire pipewire-pulse pipewire-alsa wireplumber
         ttf-font-awesome nautilus qt5ct qt6ct kvantum nwg-look firefox
         papirus-icon-theme breeze-icons swww xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
         gsettings-desktop-schemas spice-vdagent qemu-guest-agent
