@@ -13,7 +13,6 @@
 @define-color yellow #f9e2af;
 
 * {
-    all: unset;
     font-family: "JetBrains Mono Nerd Font", "Inter", sans-serif;
     font-size: 13px;
 }
@@ -22,10 +21,9 @@
     background-color: rgba(30, 30, 46, 0.85);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     padding: 16px;
-    width: 360px;
+    min-width: 360px;
     margin: 8px;
     border-radius: 16px;
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 }
 
 .sidepanel-header {
@@ -49,7 +47,6 @@
     border-radius: 10px;
     padding: 8px 12px;
     color: @text;
-    transition: all 0.2s ease;
 }
 
 .icon-btn:hover {
@@ -62,7 +59,7 @@
 }
 
 /* Quick Toggles */
-.quick-toggles-grid {
+.quick-toggles-container {
     margin: 8px 0;
 }
 
@@ -71,7 +68,6 @@
     border-radius: 12px;
     padding: 10px;
     color: @subtext;
-    transition: all 0.2s ease;
 }
 
 .toggle-btn:hover {
@@ -99,11 +95,8 @@
     margin-right: 8px;
 }
 
-.slider slider {
+.slider scale {
     min-height: 8px;
-    min-width: 8px;
-    background-color: @subtext;
-    border-radius: 50%;
 }
 
 .slider trough {
@@ -116,41 +109,6 @@
     min-height: 6px;
     background-color: @blue;
     border-radius: 4px;
-}
-
-/* Media Player */
-.media-player {
-    background-color: @surface;
-    border-radius: 14px;
-    padding: 12px;
-    margin: 8px 0;
-}
-
-.media-art {
-    border-radius: 8px;
-}
-
-.media-title {
-    font-weight: bold;
-    color: @text;
-}
-
-.media-artist {
-    font-size: 11px;
-    color: @subtext;
-}
-
-.media-controls button {
-    background-color: transparent;
-    color: @text;
-    font-size: 16px;
-    padding: 6px;
-    border-radius: 8px;
-}
-
-.media-controls button:hover {
-    background-color: @surface1;
-    color: @blue;
 }
 
 /* Notifications */
@@ -179,7 +137,6 @@
 
 .notifications-scroll {
     min-height: 180px;
-    max-height: 320px;
     margin-top: 8px;
 }
 
@@ -225,5 +182,5 @@
 
 .notifications-popup-container {
     margin: 12px;
-    width: 320px;
+    min-width: 320px;
 }

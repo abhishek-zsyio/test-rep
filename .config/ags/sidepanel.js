@@ -3,6 +3,16 @@ import Gdk from "gi://Gdk?version=3.0";
 import GLib from "gi://GLib";
 import Gio from "gi://Gio";
 
+function el(WidgetClass, props = {}, cssClass = "") {
+    const w = new WidgetClass(props);
+    if (cssClass) {
+        cssClass.split(" ").forEach(c => {
+            if (c) w.get_style_context().add_class(c);
+        });
+    }
+    return w;
+}
+
 function exec(cmd) {
     try {
         const [ok, out] = GLib.spawn_command_line_sync(cmd);
@@ -20,61 +30,56 @@ function execAsync(cmd) {
 
 // --- Header Widget ---
 function Header(win) {
-    const userLabel = new Gtk.Label({
-        className: "header-user",
+    const userLabel = el(Gtk.Label, {
         xalign: 0,
         label: (exec("whoami") || "USER").toUpperCase(),
-    });
+    }, "header-user");
 
-    const clockLabel = new Gtk.Label({
-        className: "header-clock",
+    const clockLabel = el(Gtk.Label, {
         xalign: 0,
         label: exec('date "+%A, %B %d • %H:%M"'),
-    });
+    }, "header-clock");
 
     GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
         clockLabel.set_text(exec('date "+%A, %B %d • %H:%M"'));
         return GLib.SOURCE_CONTINUE;
     });
 
-    const infoBox = new Gtk.Box({
+    const infoBox = el(Gtk.Box, {
         orientation: Gtk.Orientation.VERTICAL,
         hexpand: true,
     });
     infoBox.pack_start(userLabel, false, false, 0);
     infoBox.pack_start(clockLabel, false, false, 0);
 
-    const lockBtn = new Gtk.Button({
-        className: "icon-btn lock-btn",
+    const lockBtn = el(Gtk.Button, {
         label: "🔒",
         tooltip_text: "Lock Screen",
-    });
+    }, "icon-btn lock-btn");
     lockBtn.connect("clicked", () => {
         win.hide();
         execAsync("hyprlock");
     });
 
-    const powerBtn = new Gtk.Button({
-        className: "icon-btn power-btn",
+    const powerBtn = el(Gtk.Button, {
         label: "⏻",
         tooltip_text: "Power Menu",
-    });
+    }, "icon-btn power-btn");
     powerBtn.connect("clicked", () => {
         win.hide();
         execAsync("pkill -x rofi || ~/.config/rofi/powermenu/powermenu.sh");
     });
 
-    const actionsBox = new Gtk.Box({
+    const actionsBox = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
         spacing: 8,
     });
     actionsBox.pack_start(lockBtn, false, false, 0);
     actionsBox.pack_start(powerBtn, false, false, 0);
 
-    const box = new Gtk.Box({
-        className: "sidepanel-header",
+    const box = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
-    });
+    }, "sidepanel-header");
     box.pack_start(infoBox, true, true, 0);
     box.pack_start(actionsBox, false, false, 0);
 
@@ -83,23 +88,21 @@ function Header(win) {
 
 // --- Quick Toggles ---
 function QuickToggles() {
-    const wifiBtn = new Gtk.Button({
-        className: "toggle-btn",
+    const wifiBtn = el(Gtk.Button, {
         label: "󰤨  Wi-Fi",
-    });
+    }, "toggle-btn");
     wifiBtn.connect("clicked", () => {
         execAsync("nmcli radio wifi toggle");
     });
 
-    const btBtn = new Gtk.Button({
-        className: "toggle-btn",
+    const btBtn = el(Gtk.Button, {
         label: "󰂯  Bluetooth",
-    });
+    }, "toggle-btn");
     btBtn.connect("clicked", () => {
         execAsync("rfkill toggle bluetooth");
     });
 
-    const row1 = new Gtk.Box({
+    const row1 = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
         homogeneous: true,
         spacing: 8,
@@ -107,20 +110,18 @@ function QuickToggles() {
     row1.pack_start(wifiBtn, true, true, 0);
     row1.pack_start(btBtn, true, true, 0);
 
-    const micBtn = new Gtk.Button({
-        className: "toggle-btn",
+    const micBtn = el(Gtk.Button, {
         label: "󰍬  Mic",
-    });
+    }, "toggle-btn");
     micBtn.connect("clicked", () => {
         execAsync("pactl set-source-mute @DEFAULT_SOURCE@ toggle");
     });
 
-    const dndBtn = new Gtk.Button({
-        className: "toggle-btn",
+    const dndBtn = el(Gtk.Button, {
         label: "󰂛  DND",
-    });
+    }, "toggle-btn");
 
-    const row2 = new Gtk.Box({
+    const row2 = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
         homogeneous: true,
         spacing: 8,
@@ -128,11 +129,10 @@ function QuickToggles() {
     row2.pack_start(micBtn, true, true, 0);
     row2.pack_start(dndBtn, true, true, 0);
 
-    const box = new Gtk.Box({
-        className: "quick-toggles-container",
+    const box = el(Gtk.Box, {
         orientation: Gtk.Orientation.VERTICAL,
         spacing: 8,
-    });
+    }, "quick-toggles-container");
     box.pack_start(row1, false, false, 0);
     box.pack_start(row2, false, false, 0);
 
@@ -141,20 +141,18 @@ function QuickToggles() {
 
 // --- Sliders ---
 function VolumeSlider() {
-    const iconBtn = new Gtk.Button({
-        className: "slider-icon-btn",
+    const iconBtn = el(Gtk.Button, {
         label: "󰕾",
-    });
+    }, "slider-icon-btn");
     iconBtn.connect("clicked", () => {
         execAsync("pactl set-sink-mute @DEFAULT_SINK@ toggle");
     });
 
-    const scale = new Gtk.Scale({
-        className: "slider",
+    const scale = el(Gtk.Scale, {
         orientation: Gtk.Orientation.HORIZONTAL,
         draw_value: false,
         hexpand: true,
-    });
+    }, "slider");
     scale.set_range(0, 100);
 
     GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
@@ -170,10 +168,9 @@ function VolumeSlider() {
         execAsync(`pactl set-sink-volume @DEFAULT_SINK@ ${val}%`);
     });
 
-    const box = new Gtk.Box({
-        className: "slider-box",
+    const box = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
-    });
+    }, "slider-box");
     box.pack_start(iconBtn, false, false, 0);
     box.pack_start(scale, true, true, 0);
 
@@ -181,17 +178,15 @@ function VolumeSlider() {
 }
 
 function BrightnessSlider() {
-    const iconLabel = new Gtk.Label({
-        className: "slider-icon",
+    const iconLabel = el(Gtk.Label, {
         label: "󰃟 ",
-    });
+    }, "slider-icon");
 
-    const scale = new Gtk.Scale({
-        className: "slider",
+    const scale = el(Gtk.Scale, {
         orientation: Gtk.Orientation.HORIZONTAL,
         draw_value: false,
         hexpand: true,
-    });
+    }, "slider");
     scale.set_range(0, 100);
 
     GLib.timeout_add(GLib.PRIORITY_DEFAULT, 2000, () => {
@@ -210,10 +205,9 @@ function BrightnessSlider() {
         execAsync(`brightnessctl s ${pct}%`);
     });
 
-    const box = new Gtk.Box({
-        className: "slider-box",
+    const box = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
-    });
+    }, "slider-box");
     box.pack_start(iconLabel, false, false, 0);
     box.pack_start(scale, true, true, 0);
 
@@ -222,49 +216,43 @@ function BrightnessSlider() {
 
 // --- Notifications Center ---
 function NotificationsCenter() {
-    const titleLabel = new Gtk.Label({
-        className: "notifications-title",
+    const titleLabel = el(Gtk.Label, {
         label: "Notifications",
         xalign: 0,
         hexpand: true,
-    });
+    }, "notifications-title");
 
-    const clearBtn = new Gtk.Button({
-        className: "clear-btn",
+    const clearBtn = el(Gtk.Button, {
         label: "Clear All 󰆴",
-    });
+    }, "clear-btn");
 
-    const listContainer = new Gtk.Box({
+    const listContainer = el(Gtk.Box, {
         orientation: Gtk.Orientation.VERTICAL,
         spacing: 8,
     });
 
-    const emptyLabel = new Gtk.Label({
-        className: "empty-notifications",
+    const emptyLabel = el(Gtk.Label, {
         label: "No Notifications",
-    });
+    }, "empty-notifications");
     listContainer.pack_start(emptyLabel, true, true, 0);
 
-    const scroll = new Gtk.ScrolledWindow({
-        className: "notifications-scroll",
+    const scroll = el(Gtk.ScrolledWindow, {
         hscrollbar_policy: Gtk.PolicyType.NEVER,
         vscrollbar_policy: Gtk.PolicyType.AUTOMATIC,
         vexpand: true,
-    });
+    }, "notifications-scroll");
     scroll.add(listContainer);
 
-    const headerBox = new Gtk.Box({
-        className: "notifications-header",
+    const headerBox = el(Gtk.Box, {
         orientation: Gtk.Orientation.HORIZONTAL,
-    });
+    }, "notifications-header");
     headerBox.pack_start(titleLabel, true, true, 0);
     headerBox.pack_start(clearBtn, false, false, 0);
 
-    const box = new Gtk.Box({
-        className: "notifications-center",
+    const box = el(Gtk.Box, {
         orientation: Gtk.Orientation.VERTICAL,
         spacing: 8,
-    });
+    }, "notifications-center");
     box.pack_start(headerBox, false, false, 0);
     box.pack_start(scroll, true, true, 0);
 
@@ -273,7 +261,7 @@ function NotificationsCenter() {
 
 // --- SidePanel Window ---
 export function SidePanel() {
-    const win = new Gtk.Window({
+    const win = el(Gtk.Window, {
         name: "sidepanel",
         type: Gtk.WindowType.TOPLEVEL,
         decorated: false,
@@ -282,11 +270,10 @@ export function SidePanel() {
         default_height: 700,
     });
 
-    const content = new Gtk.Box({
-        className: "sidepanel-container",
+    const content = el(Gtk.Box, {
         orientation: Gtk.Orientation.VERTICAL,
         spacing: 14,
-    });
+    }, "sidepanel-container");
 
     content.pack_start(Header(win), false, false, 0);
     content.pack_start(QuickToggles(), false, false, 0);
