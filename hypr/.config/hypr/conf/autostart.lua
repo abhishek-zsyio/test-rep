@@ -1,11 +1,11 @@
 -- Autostart Processes
 
 hl.on("hyprland.start", function ()
-    hl.exec_cmd("swww-daemon &")
-    hl.exec_cmd("ags run &")
-    hl.exec_cmd("elephant &")
-    hl.exec_cmd("wl-paste --watch cliphist store &")
-    hl.exec_cmd("hypridle &")
-    hl.exec_cmd("nm-applet --indicator &")
-    hl.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &")
+    hl.dispatch(hl.dsp.exec_cmd("swww-daemon"))
+    hl.dispatch(hl.dsp.exec_cmd("ags run"))
+    hl.dispatch(hl.dsp.exec_cmd("elephant"))
+    hl.dispatch(hl.dsp.exec_cmd("wl-paste --watch cliphist store"))
+    hl.dispatch(hl.dsp.exec_cmd("hypridle"))
+    hl.dispatch(hl.dsp.exec_cmd("nm-applet --indicator"))
+    hl.dispatch(hl.dsp.exec_cmd("/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1"))
 end)
