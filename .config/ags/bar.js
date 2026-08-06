@@ -2,6 +2,7 @@ import Gtk from "gi://Gtk?version=3.0";
 import Gdk from "gi://Gdk?version=3.0";
 import GLib from "gi://GLib";
 import Gio from "gi://Gio";
+import Pango from "gi://Pango";
 
 function el(WidgetClass, props = {}, cssClass = "") {
     const w = new WidgetClass(props);
@@ -77,7 +78,7 @@ function WindowTitle() {
     const label = el(Gtk.Label, {
         label: "Desktop",
         xalign: 0.5,
-        truncate: true,
+        ellipsize: Pango.EllipsizeMode.END,
         max_width_chars: 40,
     }, "bar-window-title");
 
